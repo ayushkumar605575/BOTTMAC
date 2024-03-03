@@ -33,7 +33,8 @@ class MainActivity : ComponentActivity() {
         val isComp = GlobalScope.launch {
             val response = Api.getProducts()
             if (response.isSuccessful) {
-                val image = response.body()?.get(0)?.image
+//                println(response.body())
+                val image = response.body()?.get(0)?.productImage
                 images = Base64.decode(image, Base64.DEFAULT)
 
             }

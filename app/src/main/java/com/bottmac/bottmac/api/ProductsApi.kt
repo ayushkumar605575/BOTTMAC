@@ -7,9 +7,9 @@ import retrofit2.http.GET
 
 interface ProductsApi {
 
-    @GET("/")
+    @GET("/?format=json")
     suspend fun getProducts(): Response<List<ProductItem>>
 
-    @GET("/")
+    @GET("/?format=json")
     suspend fun getCategories(): Response<List<String>>
 }
