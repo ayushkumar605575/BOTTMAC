@@ -4,6 +4,6 @@ import java.util.Objects
 
 data class ProductItem(
     val productId: Int,
-    val productImage: String,
+    val productImage: List<String>,
     val productName: String
 )
