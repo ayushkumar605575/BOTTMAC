@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bottmac.bottmac.api.ProductsApi
 import com.bottmac.bottmac.ui.theme.BOTTMACTheme
@@ -24,28 +23,27 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import coil.compose.AsyncImage
 import com.bottmac.bottmac.models.ProductItem
-import kotlinx.coroutines.DelicateCoroutinesApi
+import java.lang.Byte
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var api: ProductsApi
-
-    private var isComp = false
-    private var res: List<ProductItem> = listOf()
+    private lateinit var res: List<ProductItem>
 //    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        GlobalScope.launch {
+        val isComp = GlobalScope.launch {
             val response = api.getProducts()
             if (response.isSuccessful) {
                 res = response.body()!!
-                println(res.size)
+                println(res)
+                println(res[0].productFeatures.split("\\n")[0])
+                println(res[0].productFeatures.split("\\n")[1])
 //                println(res[1])
-                isComp = !isComp
             }
 //            println(1234567)
         }
@@ -56,11 +54,27 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    println(isComp.isCompleted)
-                    if (isComp) {
+                    println(isComp.isCompleted)
+                    if (isComp.isCompleted) {
                     println(isComp)
-//                        println(res[1].productImage[0])
+//                        println(res[0].productImage[0])
                         println(21345678)
+                        LazyColumn {
+                            item { Text(text = res[0].productName) }
+                            item { Text(text = res[0].productFeatures) }
+                            item {
+                                AsyncImage(
+                                        modifier = Modifier.size(400.dp),
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(Base64.decode(res[0].productImage[0], Base64.DEFAULT))
+                                            .crossfade(500)
+                                            .build(),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        alignment = Alignment.Center
+                                    )
+                        }
+//                        }
 //                        LazyColumn {
 //                            item {
 //                                Text(text = res[1].productName, fontSize = 40.sp)
@@ -109,6 +123,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
 }
 
 
