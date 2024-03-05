@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
     lateinit var api: ProductsApi
     private lateinit var res: List<ProductItem>
 
-        @OptIn(DelicateCoroutinesApi::class)
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val isComp = GlobalScope.launch {
