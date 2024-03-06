@@ -91,4 +91,14 @@ dependencies {
 
     //Coil
     implementation(libs.coil.compose)
+
+    implementation(libs.accompanist.insets)
+//    implementation(libs.exoplayer.core)
+//    implementation(libs.exoplayer.ui)
+
+    //Exoplayer
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.exoplayer.dash)
+    implementation(libs.androidx.media3.ui)
+
 }
