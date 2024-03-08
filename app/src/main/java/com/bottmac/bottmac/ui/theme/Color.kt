@@ -1,5 +1,6 @@
 package com.bottmac.bottmac.ui.theme
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -74,3 +75,5 @@ val md_theme_dark_scrim = Color(0xFF000000)
 
 
 val seed = Color(0xFF825500)
+val btnPrimary = Color(0xFF825500)
+val btnSecondary =  Color(0xFF035175)

@@ -19,6 +19,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.bottmac.bottmac.models.ProductItem
+import com.bottmac.bottmac.screens.LoginPage
 import com.bottmac.bottmac.screens.ProductCard
 import kotlinx.coroutines.DelicateCoroutinesApi
 
@@ -30,15 +31,15 @@ class MainActivity : ComponentActivity() {
     lateinit var api: ProductsApi
     private lateinit var res: List<ProductItem>
 
-    @OptIn(DelicateCoroutinesApi::class)
+//    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val isComp = GlobalScope.launch {
-            val response = api.getProducts()
-            if (response.isSuccessful) {
-                res = response.body()!!
-            }
-        }
+//        val isComp = GlobalScope.launch {
+//            val response = api.getProducts()
+//            if (response.isSuccessful) {
+//                res = response.body()!!
+//            }
+//        }
         setContent {
             BOTTMACTheme {
                 // A surface container using the 'background' color from the theme
@@ -46,19 +47,20 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    println(isComp.isCompleted)
-                    if (isComp.isCompleted) {
-                        LazyColumn {
-                            items(res) { productItem ->
-                                ProductCard(
-                                    productName = productItem.productName,
-                                    productsFeatures = productItem.productFeatures.split("\\n"),
-                                    productsImages = productItem.productImage
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                            }
-                        }
-                    }
+                    LoginPage()
+//                    println(isComp.isCompleted)
+//                    if (isComp.isCompleted) {
+//                        LazyColumn {
+//                            items(res) { productItem ->
+//                                ProductCard(
+//                                    productName = productItem.productName,
+//                                    productsFeatures = productItem.productFeatures.split("\\n"),
+//                                    productsImages = productItem.productImage
+//                                )
+//                                Spacer(modifier = Modifier.height(8.dp))
+//                            }
+//                        }
+//                    }
                 }
             }
         }

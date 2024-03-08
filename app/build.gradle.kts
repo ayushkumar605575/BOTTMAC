@@ -101,4 +101,15 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer.dash)
     implementation(libs.androidx.media3.ui)
 
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.material.icons.extended.android)
+
+    implementation(libs.androidx.startup.runtime)
+    implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.glide)
+    annotationProcessor (libs.compiler)
+
+    implementation(libs.zoomage)
+
 }
