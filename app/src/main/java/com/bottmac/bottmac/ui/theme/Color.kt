@@ -75,5 +75,5 @@ val md_theme_dark_scrim = Color(0xFF000000)
 
 
 val seed = Color(0xFF825500)
-val btnPrimary = Color(0xFF825500)
-val btnSecondary =  Color(0xFF035175)
+val btnPrimary = Color(0xFF86DDFF)
+val btnSecondary =  Color(0xFF04A4EE)
