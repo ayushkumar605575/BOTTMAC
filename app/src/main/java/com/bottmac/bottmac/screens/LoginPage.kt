@@ -60,7 +60,7 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
-fun LoginPage() {
+fun LoginPage(paddingValues: PaddingValues) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
     var email by rememberSaveable {
@@ -70,7 +70,9 @@ fun LoginPage() {
         mutableStateOf("")
     }
     ProvideWindowInsets {
-        LazyColumn(verticalArrangement = Arrangement.SpaceBetween) {
+        LazyColumn(
+            modifier = Modifier.padding(paddingValues),
+            verticalArrangement = Arrangement.SpaceBetween) {
             item {
                 Column(
                     modifier = Modifier
@@ -297,5 +299,5 @@ fun SignInSignUpButton(btnText: String) {
 @Preview(showBackground = true)
 @Composable
 private fun Login() {
-    LoginPage()
+    LoginPage(paddingValues = PaddingValues(16.dp))
 }

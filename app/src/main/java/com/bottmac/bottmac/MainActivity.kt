@@ -8,11 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.bottmac.bottmac.api.ProductsApi
-import com.bottmac.bottmac.screens.LoginPage
+import com.bottmac.bottmac.screens.MainScreen
 import com.bottmac.bottmac.ui.theme.BOTTMACTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import com.bottmac.bottmac.screens.SignUpPage
 
 
 @AndroidEntryPoint
@@ -23,6 +22,7 @@ class MainActivity : ComponentActivity() {
 //    private lateinit var res: List<ProductItem>
 
 //    @OptIn(DelicateCoroutinesApi::class)
+//    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        val isComp = GlobalScope.launch {
@@ -38,21 +38,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    LoginPage()
-                    SignUpPage()
-//                    println(isComp.isCompleted)
-//                    if (isComp.isCompleted) {
-//                        LazyColumn {
-//                            items(res) { productItem ->
-//                                ProductCard(
-//                                    productName = productItem.productName,
-//                                    productsFeatures = productItem.productFeatures.split("\\n"),
-//                                    productsImages = productItem.productImage
-//                                )
-//                                Spacer(modifier = Modifier.height(8.dp))
-//                            }
-//                        }
-//                    }
+                    MainScreen()
                 }
             }
         }

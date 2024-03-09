@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,7 +44,7 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
-fun SignUpPage() {
+fun SignUpPage(paddingValues: PaddingValues) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
     var email by rememberSaveable {
@@ -62,7 +63,7 @@ fun SignUpPage() {
         LazyColumn(
             modifier = Modifier
                 .navigationBarsWithImePadding()
-                .padding(start = 24.dp, end = 24.dp)
+                .padding(paddingValues)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Top),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -192,5 +193,5 @@ fun GoogleOrGuest() {
 @Preview
 @Composable
 private fun SignUpPrev() {
-    SignUpPage()
+    SignUpPage(paddingValues = PaddingValues(16.dp))
 }
