@@ -1,5 +1,7 @@
 package com.bottmac.bottmac.screens
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
@@ -11,16 +13,45 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.bottmac.bottmac.presentation.profile.ProfileScreen
+import com.bottmac.bottmac.presentation.google_sign_in.GoogleAuthUiClient
+import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
+import kotlinx.coroutines.launch
 
 @Composable
-fun NavGraph(navController: NavHostController, paddingValues: PaddingValues) {
-    NavHost(navController = navController, startDestination = NavigationRoutes.Home.route) {
+fun NavGraph(
+    state: SignedInState,
+    onSignInClick: () -> Unit,
+    navController: NavHostController,
+    paddingValues: PaddingValues,
+    lifecycleScope: LifecycleCoroutineScope,
+    googleAuthUiClient: GoogleAuthUiClient,
+    context: Context,
+    isSigned: () -> Unit,
+    isGuest: () -> Unit
+) {
+//    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = NavigationRoutes.SignIn.route
+    ) {
+
+        composable(route = NavigationRoutes.SignIn.route) {
+            LoginPage(state = state, onSignInClick = onSignInClick, navController = navController, isGuest = isGuest)
+        }
+
+        composable(route = NavigationRoutes.SignUp.route) {
+            SignUpPage(state = state, onSignInClick = onSignInClick, navController = navController, isGuest = isGuest)
+        }
+        
+//    NavHost(navController = navController, startDestination = NavigationRoutes.SignIn.route) {
         composable(route = NavigationRoutes.Home.route) {
             HomeScreen(modifier = Modifier.padding(paddingValues))
         }
@@ -37,14 +68,25 @@ fun NavGraph(navController: NavHostController, paddingValues: PaddingValues) {
             SearchScreen(Modifier.padding(paddingValues))
         }
         composable(route = NavigationRoutes.Profile.route) {
-            ProfileScreen(modifier = Modifier.padding(paddingValues))
+            ProfileScreen(
+                userData = googleAuthUiClient.getSignedInUser(),
+                onSignOut = {
+                            lifecycleScope.launch { 
+                                googleAuthUiClient.signOut()
+                                Toast.makeText(
+                                    context,
+                                    "User Signed Out",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                isSigned()
+                            }
+                },
+                modifier = Modifier.padding(paddingValues)
+            )
         }
-        composable(route = NavigationRoutes.SignIn.route) {
-            LoginPage(paddingValues = paddingValues)
-        }
-        composable(route = NavigationRoutes.SignUp.route) {
-            SignUpPage(paddingValues = paddingValues)
-        }
+//        composable(route = NavigationRoutes.SignUp.route) {
+//            SignUpPage(paddingValues = paddingValues)
+//        }
     }
 }
 

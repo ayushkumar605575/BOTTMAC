@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.bottmac.bottmac" />
+                  <option name="mobileSdkAppId" value="1:34689542065:android:be1b69c0e52e2eba26bf90" />
+                  <option name="projectId" value="bottmac-c81ae" />
+                  <option name="projectNumber" value="34689542065" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

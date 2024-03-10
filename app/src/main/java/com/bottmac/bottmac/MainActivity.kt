@@ -7,9 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.rememberNavController
 import com.bottmac.bottmac.api.ProductsApi
+import com.bottmac.bottmac.presentation.google_sign_in.GoogleAuthUiClient
 import com.bottmac.bottmac.screens.MainScreen
 import com.bottmac.bottmac.ui.theme.BOTTMACTheme
+import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -17,11 +21,18 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    private val googleAuthUiClient by lazy {
+        GoogleAuthUiClient(
+            context = applicationContext,
+            oneTapClient = Identity.getSignInClient(applicationContext)
+        )
+    }
+
     @Inject
     lateinit var api: ProductsApi
 //    private lateinit var res: List<ProductItem>
 
-//    @OptIn(DelicateCoroutinesApi::class)
+    //    @OptIn(DelicateCoroutinesApi::class)
 //    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +49,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    val navController = rememberNavController()
+//                    NavGraph(navController = navController, paddingValues = null, lifecycleScope = lifecycleScope, googleAuthUiClient)
+                    MainScreen(
+                        lifecycleScope = lifecycleScope,
+                        navController = navController,
+                        googleAuthUiClient = googleAuthUiClient,
+                        context = applicationContext
+                    )
+
                 }
             }
         }

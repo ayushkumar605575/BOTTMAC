@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
@@ -50,17 +51,23 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.bottmac.bottmac.R
+import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
 import com.bottmac.bottmac.ui.theme.btnPrimary
 import com.bottmac.bottmac.ui.theme.btnSecondary
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
-fun LoginPage(paddingValues: PaddingValues) {
+fun LoginPage(
+    state: SignedInState,
+    onSignInClick: () -> Unit,
+    navController: NavHostController,
+    isGuest: () -> Unit
+) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
     var email by rememberSaveable {
@@ -71,8 +78,9 @@ fun LoginPage(paddingValues: PaddingValues) {
     }
     ProvideWindowInsets {
         LazyColumn(
-            modifier = Modifier.padding(paddingValues),
-            verticalArrangement = Arrangement.SpaceBetween) {
+            modifier = Modifier.padding(24.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
             item {
                 Column(
                     modifier = Modifier
@@ -130,12 +138,16 @@ fun LoginPage(paddingValues: PaddingValues) {
                         thickness = 1.dp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    GoogleOrGuest()
+                    GoogleOrGuest(
+                        state = state,
+                        onSignInClick = onSignInClick,
+                        isGuest = isGuest
+                    )
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(text = "Don't have an account?")
-                        TextButton(onClick = { /*TODO*/ }) {
+                        TextButton(onClick = { navController.navigate(NavigationRoutes.SignUp.route) }) {
                             Text(text = "SIGN UP")
                         }
                     }
@@ -155,6 +167,13 @@ sealed class InputType(
         label = "Email",
         icon = Icons.Default.Email,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        visualTransformation = VisualTransformation.None
+    )
+
+    data object PhoneNumber : InputType(
+        label = "Phone Number",
+        icon = Icons.Default.Phone,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
         visualTransformation = VisualTransformation.None
     )
 
@@ -206,7 +225,8 @@ fun TextInput(
             .fillMaxWidth()
             .focusRequester(focusRequester ?: FocusRequester()),
         leadingIcon = { Icon(imageVector = inputType.icon, contentDescription = null) },
-        label = { Text(text = inputType.label) },
+        label = { Text(text = inputType.label, maxLines = 1) },
+//        ime,
         shape = MaterialTheme.shapes.extraLarge,
         singleLine = true,
         keyboardOptions = inputType.keyboardOptions,
@@ -231,7 +251,7 @@ fun TextInput(
                         Text(text = "• Must contain Numbers 1-9")
                     }
                 } else if (inputType.label == "Confirm Password" && (value != pass || value.isEmpty())) {
-                        Text(text = "• Password Doesn't Match")
+                    Text(text = "• Password Doesn't Match")
                 }
             }
         },
@@ -262,7 +282,9 @@ fun SignInSignUpButton(btnText: String) {
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(48.dp),
-        onClick = { /*TODO*/ },
+        onClick = {
+//           TODO       FirebaseAuth.getInstance().signInWithEmailAndPassword()
+                  },
         contentPadding = PaddingValues(),
         colors = ButtonDefaults.buttonColors(Color.Transparent),
         shape = RoundedCornerShape(48.dp),
@@ -296,8 +318,8 @@ fun SignInSignUpButton(btnText: String) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun Login() {
-    LoginPage(paddingValues = PaddingValues(16.dp))
-}
+//@Preview(showBackground = true)
+//@Composable
+//private fun Login() {
+//    LoginPage()
+//}

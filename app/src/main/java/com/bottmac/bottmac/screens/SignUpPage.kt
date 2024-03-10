@@ -1,10 +1,10 @@
 package com.bottmac.bottmac.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,18 +34,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.bottmac.bottmac.R
+import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
-fun SignUpPage(paddingValues: PaddingValues) {
+fun SignUpPage(
+    state: SignedInState,
+    onSignInClick: () -> Unit,
+    navController: NavHostController,
+    isGuest: () -> Unit
+) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
     var email by rememberSaveable {
@@ -56,6 +64,9 @@ fun SignUpPage(paddingValues: PaddingValues) {
     var userName by rememberSaveable {
         mutableStateOf("")
     }
+    var phoneNumberWithCountryCode by rememberSaveable {
+        mutableStateOf("")
+    }
     var confirmPassword by rememberSaveable {
         mutableStateOf("")
     }
@@ -63,7 +74,7 @@ fun SignUpPage(paddingValues: PaddingValues) {
         LazyColumn(
             modifier = Modifier
                 .navigationBarsWithImePadding()
-                .padding(paddingValues)
+                .padding(start = 24.dp, end = 24.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Top),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -85,6 +96,19 @@ fun SignUpPage(paddingValues: PaddingValues) {
                     focusRequester = passwordFocusRequester,
                     value = userName,
                     onValueChange = { userName = it }
+                )
+            }
+            item {
+                // TODO Add Phone Number With Country Code
+                TextInput(
+                    inputType = InputType.PhoneNumber,
+                    keyboardActions = KeyboardActions(onNext = {
+//                        focusManager.clearFocus()
+                        passwordFocusRequester.requestFocus()
+                    }),
+                    focusRequester = passwordFocusRequester,
+                    value = phoneNumberWithCountryCode,
+                    onValueChange = { phoneNumberWithCountryCode = it }
                 )
             }
             item {
@@ -137,14 +161,18 @@ fun SignUpPage(paddingValues: PaddingValues) {
                 )
             }
             item {
-                GoogleOrGuest()
+                GoogleOrGuest(
+                    state = state,
+                    onSignInClick = onSignInClick,
+                    isGuest = isGuest
+                )
             }
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Already have account?")
-                    TextButton(onClick = { /*TODO*/ }) {
+                    TextButton(onClick = { navController.popBackStack() }) {
                         Text(text = "SIGN IN")
                     }
                 }
@@ -154,13 +182,29 @@ fun SignUpPage(paddingValues: PaddingValues) {
 }
 
 @Composable
-fun GoogleOrGuest() {
+fun GoogleOrGuest(
+    state: SignedInState,
+    onSignInClick: () -> Unit,
+    isGuest: () -> Unit
+) {
+
+    val context = LocalContext.current
+    LaunchedEffect(key1 = state.signError) {
+        state.signError?.let {error ->
+            Toast.makeText(
+                context,
+                error,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = onSignInClick,
             modifier = Modifier
                 .border(
                     BorderStroke(1.dp, Color.Gray),
@@ -174,7 +218,7 @@ fun GoogleOrGuest() {
             )
         }
 
-        TextButton(onClick = { /*TODO*/ },
+        TextButton(onClick = isGuest,
             modifier = Modifier,
             colors = ButtonDefaults.textButtonColors(
                 contentColor = MaterialTheme.colorScheme.onSurface
@@ -190,8 +234,8 @@ fun GoogleOrGuest() {
     }
 }
 
-@Preview
-@Composable
-private fun SignUpPrev() {
-    SignUpPage(paddingValues = PaddingValues(16.dp))
-}
+//@Preview
+//@Composable
+//private fun SignUpPrev() {
+//    SignUpPage()
+//}
