@@ -61,71 +61,71 @@ fun MainScreen(
     googleAuthUiClient: GoogleAuthUiClient,
     context: Context
 ) {
-    var isSignedIn by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isGuest by rememberSaveable {
-        mutableStateOf(false)
-    }
-    val viewModel = viewModel<SignInViewModel>()
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    LaunchedEffect(key1 = Unit) {
-        if (googleAuthUiClient.getSignedInUser() != null) {
-            isSignedIn = !isSignedIn
-//            navController.navigate(NavigationRoutes.Home.route)
-        }
-    }
-
-    if (!isSignedIn && !isGuest) {
-        val launcher =
-            rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartIntentSenderForResult()
-            ) { result ->
-                if (result.resultCode == ComponentActivity.RESULT_OK) {
-                    lifecycleScope.launch {
-                        val signInResult = googleAuthUiClient.signInWithIntent(
-                            intent = result.data ?: return@launch
-                        )
-                        viewModel.onSignInResult(signInResult)
-                    }
-                }
-            }
-        LaunchedEffect(key1 = state.isSignInSuccessful) {
-            if (state.isSignInSuccessful) {
-                Toast.makeText(
-                    context,
-                    "User Successfully Logged In",
-                    Toast.LENGTH_LONG
-                ).show()
-                isSignedIn = !isSignedIn
-//            navController.navigate(NavigationRoutes.Home.route)
-                viewModel.resetState()
-            }
-
-        }
-        NavGraph(
-            state = state,
-            onSignInClick = {
-                lifecycleScope.launch {
-                val signInIntentSender = googleAuthUiClient.signIn()
-                launcher.launch(
-                    IntentSenderRequest.Builder(
-                        signInIntentSender ?: return@launch
-                    ).build()
-                )
-            } },
-            navController = navController,
-            paddingValues = PaddingValues(24.dp),
-            lifecycleScope = lifecycleScope,
-            googleAuthUiClient = googleAuthUiClient,
-            context = context,
-            isGuest = {
-                isGuest = !isGuest
-                navController.navigate(NavigationRoutes.Home.route)
-                      },
-            isSigned = { isSignedIn = !isSignedIn }
-        )
+//    var isSignedIn by rememberSaveable {
+//        mutableStateOf(false)
+//    }
+//    var isGuest by rememberSaveable {
+//        mutableStateOf(false)
+//    }
+//    val viewModel = viewModel<SignInViewModel>()
+//    val state by viewModel.state.collectAsStateWithLifecycle()
+//
+//    LaunchedEffect(key1 = Unit) {
+//        if (googleAuthUiClient.getSignedInUser() != null) {
+//            isSignedIn = !isSignedIn
+////            navController.navigate(NavigationRoutes.Home.route)
+//        }
+//    }
+//
+//    if (!isSignedIn && !isGuest) {
+//        val launcher =
+//            rememberLauncherForActivityResult(
+//                contract = ActivityResultContracts.StartIntentSenderForResult()
+//            ) { result ->
+//                if (result.resultCode == ComponentActivity.RESULT_OK) {
+//                    lifecycleScope.launch {
+//                        val signInResult = googleAuthUiClient.signInWithIntent(
+//                            intent = result.data ?: return@launch
+//                        )
+//                        viewModel.onSignInResult(signInResult)
+//                    }
+//                }
+//            }
+//        LaunchedEffect(key1 = state.isSignInSuccessful) {
+//            if (state.isSignInSuccessful) {
+//                Toast.makeText(
+//                    context,
+//                    "User Successfully Logged In",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//                isSignedIn = !isSignedIn
+////            navController.navigate(NavigationRoutes.Home.route)
+//                viewModel.resetState()
+//            }
+//
+//        }
+//        NavGraph(
+//            state = state,
+//            onSignInClick = {
+//                lifecycleScope.launch {
+//                val signInIntentSender = googleAuthUiClient.signIn()
+//                launcher.launch(
+//                    IntentSenderRequest.Builder(
+//                        signInIntentSender ?: return@launch
+//                    ).build()
+//                )
+//            } },
+//            navController = navController,
+//            paddingValues = PaddingValues(24.dp),
+//            lifecycleScope = lifecycleScope,
+//            googleAuthUiClient = googleAuthUiClient,
+//            context = context,
+//            isGuest = {
+//                isGuest = !isGuest
+//                navController.navigate(NavigationRoutes.Home.route)
+//                      },
+//            isSigned = { isSignedIn = !isSignedIn }
+//        )
 //        LoginPage(
 //            state = state,
 //            onSignInClick = {
@@ -133,26 +133,9 @@ fun MainScreen(
 //            },
 //            navController = navController
 //        )
-    } else {
-        MainScreenAfterSignIn(
-            navController = navController,
-            lifecycleScope = lifecycleScope,
-            googleAuthUiClient = googleAuthUiClient,
-            context = context,
-            isSigned = {
-                isSignedIn = !isSignedIn
-            },
-            isGuest = {
-                      isGuest = !isGuest
-                navController.navigate(NavigationRoutes.Home.route)
+//    } else {
 
-            },
-            state = state,
-            onSignInClick = {},
-        )
     }
-
-}
 
 
 //    val navController = rememberNavController()

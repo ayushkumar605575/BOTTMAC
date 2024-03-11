@@ -50,9 +50,11 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 fun SignUpPage(
     state: SignedInState,
     onSignInClick: () -> Unit,
-    navController: NavHostController,
-    isGuest: () -> Unit
+//    navController: NavHostController,
+    isGuest: (Int) -> Unit
 ) {
+//    val getDefaultLangCode = getDefaultLangCode() // Auto-detect language
+//    val getDefaultPhoneCode = getDefaultPhoneCode()
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
     var email by rememberSaveable {
@@ -120,7 +122,8 @@ fun SignUpPage(
                     }),
                     focusRequester = passwordFocusRequester,
                     value = email,
-                    onValueChange = { email = it }
+                    onValueChange = { email = it },
+                    hasError = !isValidEmail(email)
                 )
             }
             item {
@@ -131,7 +134,8 @@ fun SignUpPage(
                     }),
                     focusRequester = passwordFocusRequester,
                     value = password,
-                    onValueChange = { password = it }
+                    onValueChange = { password = it },
+                    hasError = !isValidPassword(password)
                 )
             }
             item {
@@ -143,11 +147,22 @@ fun SignUpPage(
                     focusRequester = passwordFocusRequester,
                     value = confirmPassword,
                     pass = password,
-                    onValueChange = { confirmPassword = it }
+                    onValueChange = { confirmPassword = it },
+                    hasError = !isValidPassword(confirmPassword) && (password != confirmPassword)
                 )
             }
             item { Spacer(modifier = Modifier.height(20.dp)) }
-            item { SignInSignUpButton(btnText = "SIGN UP") }
+            item {
+                val isValidCredential = (isValidEmail(email) && isValidPassword(password))
+                SignInSignUpButton(
+                    btnText = "SIGN UP",
+                    email = email,
+                    password = password,
+                    isValidCredential = isValidCredential,
+                    userType = isGuest
+//                    navController = navController
+                )
+            }
             item {
                 HorizontalDivider(
                     modifier = Modifier.padding(
@@ -164,7 +179,7 @@ fun SignUpPage(
                 GoogleOrGuest(
                     state = state,
                     onSignInClick = onSignInClick,
-                    isGuest = isGuest
+                    isGuest = { isGuest(0) }
                 )
             }
             item {
@@ -172,7 +187,7 @@ fun SignUpPage(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Already have account?")
-                    TextButton(onClick = { navController.popBackStack() }) {
+                    TextButton(onClick = { isGuest(1) }) {
                         Text(text = "SIGN IN")
                     }
                 }
@@ -190,7 +205,7 @@ fun GoogleOrGuest(
 
     val context = LocalContext.current
     LaunchedEffect(key1 = state.signError) {
-        state.signError?.let {error ->
+        state.signError?.let { error ->
             Toast.makeText(
                 context,
                 error,
@@ -218,14 +233,16 @@ fun GoogleOrGuest(
             )
         }
 
-        TextButton(onClick = isGuest,
+        TextButton(
+            onClick = isGuest,
             modifier = Modifier,
             colors = ButtonDefaults.textButtonColors(
                 contentColor = MaterialTheme.colorScheme.onSurface
             )
 
         ) {
-            Text(text = "Browse as Guest",
+            Text(
+                text = "Browse as Guest",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
             )

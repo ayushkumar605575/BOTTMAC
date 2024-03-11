@@ -50,6 +50,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
@@ -115,5 +116,19 @@ dependencies {
     annotationProcessor (libs.compiler)
 
     implementation(libs.zoomage)
+
+    // Import the BoM for the Firebase platform
+    implementation(platform(libs.firebase.bom))
+
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+//    noinspection UseTomlInstead
+//    implementation("com.google.firebase:firebase-auth:")
+
+    // Also add the dependency for the Google Play services library and specify its version
+//    implementation(libs.play.services.auth)
+
+//    implementation("androidx.compose.material:material:1.6.3")
+//    implementation(libs.jetpack.compose.country.code.picker.emoji)
 
 }

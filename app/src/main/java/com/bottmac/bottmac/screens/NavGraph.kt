@@ -40,16 +40,16 @@ fun NavGraph(
 //    val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = NavigationRoutes.SignIn.route
+        startDestination = NavigationRoutes.Home.route
     ) {
 
-        composable(route = NavigationRoutes.SignIn.route) {
-            LoginPage(state = state, onSignInClick = onSignInClick, navController = navController, isGuest = isGuest)
-        }
-
-        composable(route = NavigationRoutes.SignUp.route) {
-            SignUpPage(state = state, onSignInClick = onSignInClick, navController = navController, isGuest = isGuest)
-        }
+//        composable(route = NavigationRoutes.SignIn.route) {
+//            LoginPage(state = state, onSignInClick = onSignInClick, navController = navController, isGuest = isGuest)
+//        }
+//
+//        composable(route = NavigationRoutes.SignUp.route) {
+//            SignUpPage(state = state, onSignInClick = onSignInClick, navController = navController, isGuest = isGuest)
+//        }
         
 //    NavHost(navController = navController, startDestination = NavigationRoutes.SignIn.route) {
         composable(route = NavigationRoutes.Home.route) {

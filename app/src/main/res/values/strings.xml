@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">BOTTMAC</string>
     <string name="default_web_client_id">34689542065-0a32lmaofrbhm1i6h9ho24q5ad2hrjgb.apps.googleusercontent.com</string>
+    <string name="sign_in">SIGN IN</string>
 </resources>

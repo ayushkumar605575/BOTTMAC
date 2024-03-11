@@ -1,5 +1,6 @@
 package com.bottmac.bottmac.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,6 +35,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -44,8 +47,10 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -55,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.bottmac.bottmac.R
+import com.bottmac.bottmac.presentation.email_sign_in.EmailSignInSignUpClient
 import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
 import com.bottmac.bottmac.ui.theme.btnPrimary
 import com.bottmac.bottmac.ui.theme.btnSecondary
@@ -66,7 +72,7 @@ fun LoginPage(
     state: SignedInState,
     onSignInClick: () -> Unit,
     navController: NavHostController,
-    isGuest: () -> Unit
+    isGuest: (Int) -> Unit
 ) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
@@ -101,7 +107,8 @@ fun LoginPage(
                             passwordFocusRequester.requestFocus()
                         }),
                         value = email,
-                        onValueChange = { email = it }
+                        onValueChange = { email = it },
+                        hasError = !isValidEmail(email)
                     )
                     TextInput(
                         inputType = InputType.Password,
@@ -110,14 +117,14 @@ fun LoginPage(
                         }),
                         focusRequester = passwordFocusRequester,
                         value = password,
-                        onValueChange = { password = it })
+                        onValueChange = { password = it },
+                        hasError = !isValidPassword(password)
+                    )
                     TextButton(onClick = { /*TODO*/ }) {
                         Text(text = "Forgot Password?")
                     }
                 }
             }
-
-
             item {
                 Column(
                     modifier = Modifier
@@ -127,7 +134,15 @@ fun LoginPage(
                     verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.Bottom),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    SignInSignUpButton(btnText = "SIGN IN")
+                    val isValidCredential = (isValidEmail(email) && isValidPassword(password))
+                    SignInSignUpButton(
+                        btnText = stringResource(R.string.sign_in),
+                        email = email,
+                        password = password,
+                        isValidCredential = isValidCredential,
+                        userType = isGuest
+//                        navController = navController
+                    )
                     HorizontalDivider(
                         modifier = Modifier.padding(
                             start = 48.dp,
@@ -141,13 +156,13 @@ fun LoginPage(
                     GoogleOrGuest(
                         state = state,
                         onSignInClick = onSignInClick,
-                        isGuest = isGuest
+                        isGuest = { isGuest(0) }
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(text = "Don't have an account?")
-                        TextButton(onClick = { navController.navigate(NavigationRoutes.SignUp.route) }) {
+                        TextButton(onClick = { isGuest(2) }) {
                             Text(text = "SIGN UP")
                         }
                     }
@@ -155,6 +170,20 @@ fun LoginPage(
             }
         }
     }
+}
+
+fun isValidEmail(email: String): Boolean {
+    val emailPattern = "[a-zA-Z0-9._]+@[a-z]+\\.[a-z]{2,}"
+    return Regex(emailPattern).matches(email)
+}
+
+fun isValidPassword(password: String): Boolean {
+    return password.length >= 8
+            && password.isNotEmpty()
+            && (password.any { it.isUpperCase() })
+            && (password.any { it.isLowerCase() })
+            && (password.any { !it.isLetterOrDigit() })
+            && (password.any { it.isDigit() })
 }
 
 sealed class InputType(
@@ -173,7 +202,10 @@ sealed class InputType(
     data object PhoneNumber : InputType(
         label = "Phone Number",
         icon = Icons.Default.Phone,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number),
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Next,
+            keyboardType = KeyboardType.Number
+        ),
         visualTransformation = VisualTransformation.None
     )
 
@@ -212,7 +244,8 @@ fun TextInput(
     keyboardActions: KeyboardActions,
     value: String,
     pass: String? = null,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    hasError: Boolean = false
 ) {
 
     var passVisibility by rememberSaveable {
@@ -220,6 +253,7 @@ fun TextInput(
     }
     OutlinedTextField(
         value = value,
+        isError = hasError,
         onValueChange = { onValueChange(it) },
         modifier = Modifier
             .fillMaxWidth()
@@ -250,8 +284,10 @@ fun TextInput(
                     if (!value.any { it.isDigit() }) {
                         Text(text = "• Must contain Numbers 1-9")
                     }
-                } else if (inputType.label == "Confirm Password" && (value != pass || value.isEmpty())) {
+                } else if (hasError && inputType.label == "Confirm Password" && (value != pass || value.isEmpty())) {
                     Text(text = "• Password Doesn't Match")
+                } else if (hasError && inputType.label == "Email") {
+                    Text(text = "• Invalid Email")
                 }
             }
         },
@@ -277,14 +313,52 @@ fun TextInput(
 
 
 @Composable
-fun SignInSignUpButton(btnText: String) {
+fun SignInSignUpButton(
+    btnText: String,
+    email: String,
+    password: String,
+    isValidCredential: Boolean,
+    userType: (Int) -> Unit
+//    navController: NavHostController
+) {
+    val emailSignInSignUpClient = EmailSignInSignUpClient(LocalContext.current)
+    var waiting by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var isVerifiedUser by rememberSaveable {
+        mutableStateOf(false)
+    }
+    if (waiting || isVerifiedUser) {
+        LaunchedEffect(key1 = Unit) {
+            isVerifiedUser = emailSignInSignUpClient.signInWithEmailAndPassword(email, password)
+        }
+
+    }
+    if (isVerifiedUser) {
+//        navController.navigate(NavigationRoutes.Home.route)
+        userType(0)
+    }
+
     ElevatedButton(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(48.dp),
+        enabled = !waiting && !isVerifiedUser,
         onClick = {
 //           TODO       FirebaseAuth.getInstance().signInWithEmailAndPassword()
-                  },
+            if (!isValidCredential) {
+                println("Email or password is Empty")
+            } else {
+                waiting = !waiting
+            }
+//            if (
+//                isValidCredential
+//                && emailSignInSignUpClient.signInWithEmailAndPassword(email, password)
+//                ) {
+//            } else {
+//                println("Email not Verified.")
+//            }
+        },
         contentPadding = PaddingValues(),
         colors = ButtonDefaults.buttonColors(Color.Transparent),
         shape = RoundedCornerShape(48.dp),
@@ -309,11 +383,16 @@ fun SignInSignUpButton(btnText: String) {
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = btnText,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Row {
+                Text(
+                    text = btnText,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                if (waiting || isVerifiedUser) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                }
+            }
         }
     }
 }
