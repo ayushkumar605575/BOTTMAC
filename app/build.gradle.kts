@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -116,6 +118,7 @@ dependencies {
     annotationProcessor (libs.compiler)
 
     implementation(libs.zoomage)
+//    implementation(libs.androidx.hilt.navigation.compose)
 
     // Import the BoM for the Firebase platform
     implementation(platform(libs.firebase.bom))

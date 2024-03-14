@@ -1,13 +1,7 @@
 package com.bottmac.bottmac.screens
 
 import android.content.Context
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,12 +22,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -43,14 +32,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.presentation.google_sign_in.GoogleAuthUiClient
-import com.bottmac.bottmac.presentation.google_sign_in.SignInViewModel
 import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
+import com.bottmac.bottmac.presentation.google_sign_in.UserData
 import kotlinx.coroutines.launch
 
 
@@ -165,9 +152,10 @@ fun MainScreenAfterSignIn(
     googleAuthUiClient: GoogleAuthUiClient,
     context: Context,
     isSigned: () -> Unit,
-    isGuest: () -> Unit,
+    isGuest: (Int) -> Unit,
     state: SignedInState,
-    onSignInClick: () -> Unit
+    onSignInClick: () -> Unit,
+    signedInUser: UserData?
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -265,8 +253,9 @@ fun MainScreenAfterSignIn(
                 lifecycleScope = lifecycleScope,
                 googleAuthUiClient = googleAuthUiClient,
                 context = context,
-                isSigned = isSigned,
-                isGuest = isGuest
+//                isSigned = isSigned,
+                isGuest = { isGuest(it) },
+                signedInUser = signedInUser
             )
 //                            LoginPage(paddingValues)
 //                        SignUpPage(paddingValues)

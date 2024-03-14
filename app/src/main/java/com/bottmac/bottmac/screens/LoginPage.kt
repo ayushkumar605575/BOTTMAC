@@ -1,6 +1,6 @@
 package com.bottmac.bottmac.screens
 
-import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,8 +28,10 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -62,6 +66,8 @@ import androidx.navigation.NavHostController
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.presentation.email_sign_in.EmailSignInSignUpClient
 import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
+import com.bottmac.bottmac.presentation.google_sign_in.UserData
+import com.bottmac.bottmac.presentation.signed_in_user.SignedInUserScreen
 import com.bottmac.bottmac.ui.theme.btnPrimary
 import com.bottmac.bottmac.ui.theme.btnSecondary
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -72,7 +78,9 @@ fun LoginPage(
     state: SignedInState,
     onSignInClick: () -> Unit,
     navController: NavHostController,
-    isGuest: (Int) -> Unit
+    isGuest: (Int) -> Unit,
+    isSignedInUser: Boolean,
+    signedInUserData: UserData?
 ) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
@@ -108,7 +116,7 @@ fun LoginPage(
                         }),
                         value = email,
                         onValueChange = { email = it },
-                        hasError = !isValidEmail(email)
+                        hasError = false
                     )
                     TextInput(
                         inputType = InputType.Password,
@@ -117,11 +125,26 @@ fun LoginPage(
                         }),
                         focusRequester = passwordFocusRequester,
                         value = password,
+                        pass = "L",
                         onValueChange = { password = it },
-                        hasError = !isValidPassword(password)
+                        hasError = false
                     )
                     TextButton(onClick = { /*TODO*/ }) {
                         Text(text = "Forgot Password?")
+                    }
+                    if (isSignedInUser) {
+                        ElevatedCard(
+                            modifier = Modifier,
+
+                        ) {
+                            TextButton(onClick = {
+                                isGuest(0)
+                                }
+                            ) {
+                                Text(text = "Sign in as ${signedInUserData?.email}")
+                            }
+
+                        }
                     }
                 }
             }
@@ -137,6 +160,8 @@ fun LoginPage(
                     val isValidCredential = (isValidEmail(email) && isValidPassword(password))
                     SignInSignUpButton(
                         btnText = stringResource(R.string.sign_in),
+                        name = "",
+                        phoneNumber = "",
                         email = email,
                         password = password,
                         isValidCredential = isValidCredential,
@@ -145,9 +170,9 @@ fun LoginPage(
                     )
                     HorizontalDivider(
                         modifier = Modifier.padding(
-                            start = 48.dp,
-                            end = 48.dp,
-                            top = 48.dp,
+                            start = 28.dp,
+                            end = 28.dp,
+                            top = 36.dp,
                             bottom = 28.dp
                         ),
                         thickness = 1.dp,
@@ -268,7 +293,7 @@ fun TextInput(
         keyboardActions = keyboardActions,
         supportingText = {
             Column {
-                if (inputType.label == "Password") {
+                if (inputType.label == "Password" && pass != "L") {
                     if (value.length < 8) {
                         Text(text = "• Password length must be at least 8")
                     }
@@ -315,6 +340,8 @@ fun TextInput(
 @Composable
 fun SignInSignUpButton(
     btnText: String,
+    name: String,
+    phoneNumber: String,
     email: String,
     password: String,
     isValidCredential: Boolean,
@@ -326,31 +353,61 @@ fun SignInSignUpButton(
         mutableStateOf(false)
     }
     var isVerifiedUser by rememberSaveable {
-        mutableStateOf(false)
+        mutableStateOf(false to 0)
     }
-    if (waiting || isVerifiedUser) {
+    if (waiting || isVerifiedUser.first) {
         LaunchedEffect(key1 = Unit) {
-            isVerifiedUser = emailSignInSignUpClient.signInWithEmailAndPassword(email, password)
-        }
-
-    }
-    if (isVerifiedUser) {
+            if (btnText == "SIGN IN") {
+                isVerifiedUser = emailSignInSignUpClient.signInWithEmailAndPassword(email, password)
+                waiting = false
+                if (isVerifiedUser.first) {
 //        navController.navigate(NavigationRoutes.Home.route)
-        userType(0)
+                    userType(0)
+                } else {
+                    if (isVerifiedUser.second == 0) {
+                        println("Incorrect UserName or Password")
+                    }
+                }
+            } else {
+                if (emailSignInSignUpClient.signUpWithEmailAndPassword(
+                        name,
+                        phoneNumber,
+                        email,
+                        password
+                    )
+                ) {
+                    userType(0)
+                } else {
+                    println("Email or Password in incorrect")
+                }
+            }
+        }
     }
 
-    ElevatedButton(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(48.dp),
-        enabled = !waiting && !isVerifiedUser,
-        onClick = {
-//           TODO       FirebaseAuth.getInstance().signInWithEmailAndPassword()
-            if (!isValidCredential) {
-                println("Email or password is Empty")
-            } else {
-                waiting = !waiting
+
+    Column {
+        if (!isVerifiedUser.first && isVerifiedUser.second == 1) {
+            println("Please verify the email") // TODO Check this line
+            TextButton(onClick = {
+                emailSignInSignUpClient.verifyEmail(email)
+            }) {
+                Text(text = "SEND EMAIL VERIFICATION LINK")
             }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        ElevatedButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(48.dp),
+            enabled = !waiting && !isVerifiedUser.first,
+            onClick = {
+//           TODO       FirebaseAuth.getInstance().signInWithEmailAndPassword()
+
+                if (!isValidCredential) {
+                    println("Email or password is Empty")
+                } else {
+                    waiting = !waiting
+                }
 //            if (
 //                isValidCredential
 //                && emailSignInSignUpClient.signInWithEmailAndPassword(email, password)
@@ -358,42 +415,50 @@ fun SignInSignUpButton(
 //            } else {
 //                println("Email not Verified.")
 //            }
-        },
-        contentPadding = PaddingValues(),
-        colors = ButtonDefaults.buttonColors(Color.Transparent),
-        shape = RoundedCornerShape(48.dp),
-        elevation = ButtonDefaults.elevatedButtonElevation(
-            defaultElevation = 8.dp,
-            pressedElevation = 0.dp,
-            focusedElevation = 4.dp
-        )
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(48.dp)
-                .background(
-                    brush = Brush.horizontalGradient(
-                        listOf(
-                            btnPrimary,
-                            btnSecondary
-                        )
-                    ),
-                    shape = RoundedCornerShape(8.dp),
-                ),
-            contentAlignment = Alignment.Center,
+            },
+            contentPadding = PaddingValues(),
+            colors = ButtonDefaults.buttonColors(Color.Transparent),
+            shape = RoundedCornerShape(48.dp),
+            elevation = ButtonDefaults.elevatedButtonElevation(
+                defaultElevation = 8.dp,
+                pressedElevation = 0.dp,
+                focusedElevation = 4.dp
+            )
         ) {
-            Row {
-                Text(
-                    text = btnText,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                if (waiting || isVerifiedUser) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(48.dp)
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            listOf(
+                                btnPrimary,
+                                btnSecondary
+                            )
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(
+                        20.dp,
+                        Alignment.CenterHorizontally
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = btnText,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (waiting || isVerifiedUser.first) {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    }
                 }
             }
         }
+
     }
 }
 

@@ -23,6 +23,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.bottmac.bottmac.presentation.profile.ProfileScreen
 import com.bottmac.bottmac.presentation.google_sign_in.GoogleAuthUiClient
 import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
+import com.bottmac.bottmac.presentation.google_sign_in.UserData
+import com.bottmac.bottmac.presentation.product_details.ProductScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -33,9 +35,10 @@ fun NavGraph(
     paddingValues: PaddingValues,
     lifecycleScope: LifecycleCoroutineScope,
     googleAuthUiClient: GoogleAuthUiClient,
+    signedInUser: UserData?,
     context: Context,
-    isSigned: () -> Unit,
-    isGuest: () -> Unit
+//    isSigned: () -> Unit,
+    isGuest: (Int) -> Unit
 ) {
 //    val navController = rememberNavController()
     NavHost(
@@ -53,7 +56,7 @@ fun NavGraph(
         
 //    NavHost(navController = navController, startDestination = NavigationRoutes.SignIn.route) {
         composable(route = NavigationRoutes.Home.route) {
-            HomeScreen(modifier = Modifier.padding(paddingValues))
+            ProductScreen(modifier = Modifier.padding(paddingValues))
         }
         composable(route = NavigationRoutes.Cart.route) {
             CartScreen(modifier = Modifier.padding(paddingValues), navController)
@@ -69,7 +72,7 @@ fun NavGraph(
         }
         composable(route = NavigationRoutes.Profile.route) {
             ProfileScreen(
-                userData = googleAuthUiClient.getSignedInUser(),
+                userData = signedInUser,
                 onSignOut = {
                             lifecycleScope.launch { 
                                 googleAuthUiClient.signOut()
@@ -78,7 +81,8 @@ fun NavGraph(
                                     "User Signed Out",
                                     Toast.LENGTH_LONG
                                 ).show()
-                                isSigned()
+                                isGuest(1)
+//                                isSigned()
                             }
                 },
                 modifier = Modifier.padding(paddingValues)

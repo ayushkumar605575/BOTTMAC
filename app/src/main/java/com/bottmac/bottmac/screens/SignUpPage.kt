@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,7 +41,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -73,7 +73,7 @@ fun SignUpPage(
         mutableStateOf("")
     }
     ProvideWindowInsets {
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .navigationBarsWithImePadding()
                 .padding(start = 24.dp, end = 24.dp)
@@ -81,115 +81,120 @@ fun SignUpPage(
             verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Top),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                Image(
-                    painter = painterResource(id = R.drawable.logo),
-                    contentDescription = null,
-                    modifier = Modifier.size(120.dp),
-                )
-            }
-            item {
-                TextInput(
-                    inputType = InputType.Name,
-                    keyboardActions = KeyboardActions(onNext = {
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = null,
+                modifier = Modifier.size(120.dp),
+            )
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item {
+                    TextInput(
+                        inputType = InputType.Name,
+                        keyboardActions = KeyboardActions(onNext = {
 //                        focusManager.clearFocus()
-                        passwordFocusRequester.requestFocus()
-                    }),
-                    focusRequester = passwordFocusRequester,
-                    value = userName,
-                    onValueChange = { userName = it }
-                )
-            }
-            item {
-                // TODO Add Phone Number With Country Code
-                TextInput(
-                    inputType = InputType.PhoneNumber,
-                    keyboardActions = KeyboardActions(onNext = {
+                            passwordFocusRequester.requestFocus()
+                        }),
+                        focusRequester = passwordFocusRequester,
+                        value = userName,
+                        onValueChange = { userName = it }
+                    )
+                }
+                item {
+                    // TODO Add Phone Number With Country Code
+                    TextInput(
+                        inputType = InputType.PhoneNumber,
+                        keyboardActions = KeyboardActions(onNext = {
 //                        focusManager.clearFocus()
-                        passwordFocusRequester.requestFocus()
-                    }),
-                    focusRequester = passwordFocusRequester,
-                    value = phoneNumberWithCountryCode,
-                    onValueChange = { phoneNumberWithCountryCode = it }
-                )
-            }
-            item {
-                TextInput(
-                    inputType = InputType.Email,
-                    keyboardActions = KeyboardActions(onNext = {
+                            passwordFocusRequester.requestFocus()
+                        }),
+                        focusRequester = passwordFocusRequester,
+                        value = phoneNumberWithCountryCode,
+                        onValueChange = { phoneNumberWithCountryCode = it }
+                    )
+                }
+                item {
+                    TextInput(
+                        inputType = InputType.Email,
+                        keyboardActions = KeyboardActions(onNext = {
 //                        focusManager.clearFocus()
-                        passwordFocusRequester.requestFocus()
-                    }),
-                    focusRequester = passwordFocusRequester,
-                    value = email,
-                    onValueChange = { email = it },
-                    hasError = !isValidEmail(email)
-                )
-            }
-            item {
-                TextInput(
-                    inputType = InputType.Password,
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                    }),
-                    focusRequester = passwordFocusRequester,
-                    value = password,
-                    onValueChange = { password = it },
-                    hasError = !isValidPassword(password)
-                )
-            }
-            item {
-                TextInput(
-                    inputType = InputType.ConfirmPassword,
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                    }),
-                    focusRequester = passwordFocusRequester,
-                    value = confirmPassword,
-                    pass = password,
-                    onValueChange = { confirmPassword = it },
-                    hasError = !isValidPassword(confirmPassword) && (password != confirmPassword)
-                )
-            }
-            item { Spacer(modifier = Modifier.height(20.dp)) }
-            item {
-                val isValidCredential = (isValidEmail(email) && isValidPassword(password))
-                SignInSignUpButton(
-                    btnText = "SIGN UP",
-                    email = email,
-                    password = password,
-                    isValidCredential = isValidCredential,
-                    userType = isGuest
+                            passwordFocusRequester.requestFocus()
+                        }),
+                        focusRequester = passwordFocusRequester,
+                        value = email,
+                        onValueChange = { email = it },
+                        hasError = !isValidEmail(email)
+                    )
+                }
+                item {
+                    TextInput(
+                        inputType = InputType.Password,
+                        keyboardActions = KeyboardActions(onDone = {
+                            focusManager.clearFocus()
+                        }),
+                        focusRequester = passwordFocusRequester,
+                        value = password,
+                        onValueChange = { password = it },
+                        hasError = !isValidPassword(password)
+                    )
+                }
+                item {
+                    TextInput(
+                        inputType = InputType.ConfirmPassword,
+                        keyboardActions = KeyboardActions(onDone = {
+                            focusManager.clearFocus()
+                        }),
+                        focusRequester = passwordFocusRequester,
+                        value = confirmPassword,
+                        pass = password,
+                        onValueChange = { confirmPassword = it },
+                        hasError = !isValidPassword(confirmPassword) || (password != confirmPassword)
+                    )
+                }
+                item { Spacer(modifier = Modifier.height(20.dp)) }
+                item {
+                    val isValidCredential = (isValidEmail(email) && isValidPassword(password))
+                    SignInSignUpButton(
+                        btnText = "SIGN UP",
+                        name = userName,
+                        phoneNumber = phoneNumberWithCountryCode,
+                        email = email,
+                        password = password,
+                        isValidCredential = isValidCredential,
+                        userType = isGuest
 //                    navController = navController
-                )
-            }
-            item {
-                HorizontalDivider(
-                    modifier = Modifier.padding(
-                        start = 48.dp,
-                        end = 48.dp,
-                        top = 28.dp,
-                        bottom = 28.dp
-                    ),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            item {
-                GoogleOrGuest(
-                    state = state,
-                    onSignInClick = onSignInClick,
-                    isGuest = { isGuest(0) }
-                )
-            }
-            item {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Already have account?")
-                    TextButton(onClick = { isGuest(1) }) {
-                        Text(text = "SIGN IN")
+                    )
+                }
+                item {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(
+                            start = 48.dp,
+                            end = 48.dp,
+                            top = 28.dp,
+                            bottom = 28.dp
+                        ),
+                        thickness = 1.dp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                item {
+                    GoogleOrGuest(
+                        state = state,
+                        onSignInClick = onSignInClick,
+                        isGuest = { isGuest(0) }
+                    )
+                }
+                item {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "Already have account?")
+                        TextButton(onClick = { isGuest(1) }) {
+                            Text(text = "SIGN IN")
+                        }
                     }
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
             }
         }

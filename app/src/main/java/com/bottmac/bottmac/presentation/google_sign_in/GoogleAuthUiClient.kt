@@ -4,12 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import com.bottmac.bottmac.R
+import com.bottmac.bottmac.presentation.email_sign_in.EmailSignInSignUpClient
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CancellationException
 
@@ -18,6 +21,10 @@ class GoogleAuthUiClient(
     private val oneTapClient: SignInClient
 ) {
     private val auth = Firebase.auth
+    private val db = FirebaseFirestore.getInstance()
+    private var storageRef = FirebaseStorage.getInstance()
+
+    private val emailSignInSignUpClient = EmailSignInSignUpClient(context)
 
     suspend fun signIn(): IntentSender? {
         val result = try {
@@ -40,7 +47,7 @@ class GoogleAuthUiClient(
             val user = auth.signInWithCredential(googleCredentials).await().user
             SignInResult(
                 data = user?.run {
-                    UserData (
+                    UserData(
                         userId = uid,
                         userName = displayName,
                         profilePicUrl = photoUrl?.toString(),
@@ -70,14 +77,36 @@ class GoogleAuthUiClient(
         }
     }
 
-    fun getSignedInUser(): UserData? = auth.currentUser?.run {
-        UserData(
-            userId = uid,
-            userName = displayName,
-            profilePicUrl = photoUrl?.toString(),
-            phoneNumber = phoneNumber,
-            email = email
-        )
+    suspend fun getSignedInUser(): UserData? {
+        if (auth.currentUser != null) {
+            val user = auth.currentUser!!
+            if (user.displayName!!.isNotBlank()) {
+                return UserData(
+                    userId = auth.currentUser!!.uid,
+                    userName = user.displayName,
+                    profilePicUrl = user.photoUrl.toString(),
+                    phoneNumber = user.phoneNumber,
+                    email = user.email
+                )
+            } else {
+                val userData = try {
+                    db.document("users/${auth.currentUser!!.uid}").get().await().data
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+                if (userData != null) {
+                    return UserData(
+                        userId = auth.currentUser!!.uid,
+                        userName = userData["name"].toString(),
+                        profilePicUrl = userData["profileImageUrl"].toString(),
+                        phoneNumber = userData["phoneNumber"].toString(),
+                        email = userData["email"].toString()
+                    )
+                }
+            }
+        }
+        return null
     }
 
     private fun buildSignInRequest(): BeginSignInRequest {

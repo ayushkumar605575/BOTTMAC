@@ -21,10 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.bottmac.bottmac.R
 import com.bottmac.bottmac.presentation.google_sign_in.UserData
 
 @Composable
@@ -33,6 +35,7 @@ fun ProfileScreen(
     onSignOut: () -> Unit,
     modifier: Modifier
 ) {
+    println(userData)
     Column(
         modifier = modifier
     )
@@ -46,7 +49,8 @@ fun ProfileScreen(
         ) {
             AsyncImage(
                 modifier = Modifier.clip(CircleShape),
-                model = userData?.profilePicUrl,
+                model = if (userData != null && userData.profilePicUrl!!.isNotEmpty()) userData.profilePicUrl else R.drawable.profile_placeholder,
+                placeholder = painterResource(id = R.drawable.profile_placeholder),
                 contentScale = ContentScale.Crop,
                 contentDescription = "Profile Picture"
             )
@@ -68,7 +72,7 @@ fun ProfileScreen(
                 }
                 if (userData?.email != null) {
                     Text(
-                        text = "Email"
+                        text = userData.email
 
                     )
                 }
