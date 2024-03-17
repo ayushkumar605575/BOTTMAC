@@ -77,7 +77,7 @@ class GoogleAuthUiClient(
         }
     }
 
-    suspend fun getSignedInUser(): UserData? {
+    suspend fun getSignedInUser(): UserData {
         if (auth.currentUser != null) {
             val user = auth.currentUser!!
             if (user.displayName!!.isNotBlank()) {
@@ -106,7 +106,7 @@ class GoogleAuthUiClient(
                 }
             }
         }
-        return null
+        return UserData(null,null,null,null,null)
     }
 
     private fun buildSignInRequest(): BeginSignInRequest {

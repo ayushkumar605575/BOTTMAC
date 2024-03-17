@@ -50,7 +50,7 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 fun SignUpPage(
     state: SignedInState,
     onSignInClick: () -> Unit,
-    isGuest: (Int) -> Unit
+    userType: (Int) -> Unit
 ) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
@@ -159,7 +159,7 @@ fun SignUpPage(
                         email = email,
                         password = password,
                         isValidCredential = isValidCredential,
-                        userType = isGuest
+                        userType = userType
 //                    navController = navController
                     )
                 }
@@ -179,7 +179,7 @@ fun SignUpPage(
                     GoogleOrGuest(
                         state = state,
                         onSignInClick = onSignInClick,
-                        isGuest = { isGuest(1) }
+                        userType = { userType(0) }
                     )
                 }
                 item {
@@ -187,7 +187,7 @@ fun SignUpPage(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(text = "Already have account?")
-                        TextButton(onClick = { isGuest(1) }) {
+                        TextButton(onClick = { userType(1) }) {
                             Text(text = "SIGN IN")
                         }
                     }
@@ -202,7 +202,7 @@ fun SignUpPage(
 fun GoogleOrGuest(
     state: SignedInState,
     onSignInClick: () -> Unit,
-    isGuest: () -> Unit
+    userType: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -236,7 +236,7 @@ fun GoogleOrGuest(
         }
 
         TextButton(
-            onClick = isGuest,
+            onClick = userType,
             modifier = Modifier,
             colors = ButtonDefaults.textButtonColors(
                 contentColor = MaterialTheme.colorScheme.onSurface

@@ -1,4 +1,4 @@
-package com.bottmac.bottmac.screens
+package com.bottmac.bottmac.navigation
 
 import android.content.Context
 import android.widget.Toast
@@ -25,20 +25,17 @@ import com.bottmac.bottmac.presentation.google_sign_in.GoogleAuthUiClient
 import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
 import com.bottmac.bottmac.presentation.google_sign_in.UserData
 import com.bottmac.bottmac.presentation.product_details.ProductScreen
+import com.bottmac.bottmac.screens.CartScreen
+import com.bottmac.bottmac.screens.FavScreen
+import com.bottmac.bottmac.screens.OrderScreen
+import com.bottmac.bottmac.screens.SearchScreen
 import kotlinx.coroutines.launch
 
 @Composable
 fun NavGraph(
-    state: SignedInState,
-    onSignInClick: () -> Unit,
     navController: NavHostController,
     paddingValues: PaddingValues,
-    lifecycleScope: LifecycleCoroutineScope,
-    googleAuthUiClient: GoogleAuthUiClient,
-    signedInUser: UserData?,
-    context: Context,
-//    isSigned: () -> Unit,
-    isGuest: (Int) -> Unit
+    userType: (Int) -> Unit
 ) {
 //    val navController = rememberNavController()
     NavHost(
@@ -72,19 +69,7 @@ fun NavGraph(
         }
         composable(route = NavigationRoutes.Profile.route) {
             ProfileScreen(
-                userData = signedInUser,
-                onSignOut = {
-                            lifecycleScope.launch { 
-                                googleAuthUiClient.signOut()
-                                Toast.makeText(
-                                    context,
-                                    "User Signed Out",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                isGuest(1)
-//                                isSigned()
-                            }
-                },
+                userType = userType,
                 modifier = Modifier.padding(paddingValues)
             )
         }

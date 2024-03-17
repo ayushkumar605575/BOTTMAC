@@ -1,5 +1,6 @@
 package com.bottmac.bottmac.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -62,19 +63,21 @@ import androidx.compose.ui.unit.sp
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.presentation.email_sign_in.EmailSignInSignUpClient
 import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
+import com.bottmac.bottmac.services.FireBaseService
 import com.bottmac.bottmac.ui.theme.btnPrimary
 import com.bottmac.bottmac.ui.theme.btnSecondary
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
-fun LoginPage(
+fun LoginScreen(
     state: SignedInState,
     onSignInClick: () -> Unit,
-    isGuest: (Int) -> Unit,
+    userType: (Int) -> Unit,
 ) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
+    val firebase = FireBaseService()
     var email by rememberSaveable {
         mutableStateOf("")
     }
@@ -120,7 +123,14 @@ fun LoginPage(
                         onValueChange = { password = it },
                         hasError = false
                     )
-                    TextButton(onClick = { /*TODO*/ }) {
+                    TextButton(onClick = {
+                        if (isValidEmail(email)) {
+                            firebase.sendPasswordResetLink(email)
+                            println("Password Reset link has been sent to your email")
+                        } else {
+                            println("Enter a Valid Email Address")
+                                }
+                    }) {
                         Text(text = "Forgot Password?")
                     }
                 }
@@ -142,7 +152,7 @@ fun LoginPage(
                         email = email,
                         password = password,
                         isValidCredential = isValidCredential,
-                        userType = isGuest
+                        userType = userType
 //                        navController = navController
                     )
                     HorizontalDivider(
@@ -158,13 +168,13 @@ fun LoginPage(
                     GoogleOrGuest(
                         state = state,
                         onSignInClick = onSignInClick,
-                        isGuest = { isGuest(0) }
+                        userType = { userType(0) }
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(text = "Don't have an account?")
-                        TextButton(onClick = { isGuest(2) }) {
+                        TextButton(onClick = { userType(2) }) {
                             Text(text = "SIGN UP")
                         }
                     }

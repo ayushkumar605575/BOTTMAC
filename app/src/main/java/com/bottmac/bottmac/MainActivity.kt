@@ -13,10 +13,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -27,18 +25,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.bottmac.bottmac.presentation.google_sign_in.GoogleAuthUiClient
 import com.bottmac.bottmac.presentation.google_sign_in.SignInViewModel
-import com.bottmac.bottmac.presentation.google_sign_in.UserData
-import com.bottmac.bottmac.screens.LoginPage
+import com.bottmac.bottmac.screens.LoginScreen
 import com.bottmac.bottmac.screens.MainScreenAfterSignIn
-import com.bottmac.bottmac.screens.NavigationRoutes
+import com.bottmac.bottmac.navigation.NavigationRoutes
 import com.bottmac.bottmac.screens.SignUpPage
 import com.bottmac.bottmac.ui.theme.BOTTMACTheme
 import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -69,23 +63,25 @@ class MainActivity : ComponentActivity() {
                         // 0 -> Guest
                         mutableIntStateOf(3)
                     }
-                    var signedInUser by rememberSaveable {
-                        mutableStateOf<UserData?>(null)
-                    }
-                    var isSignedIn by rememberSaveable {
-                        mutableStateOf(false)
-                    }
+//                    var isSignedIn by rememberSaveable {
+//                        mutableStateOf(false)
+//                    }
 
-//                    var signedInUser: StateFlow<UserData?>
                     LaunchedEffect(key1 = Unit) {
-                        signedInUser = googleAuthUiClient.getSignedInUser()
-                        println(signedInUser)
-                        userType = if (signedInUser == null) {
+                        userType = if (googleAuthUiClient.getSignedInUser().userId == null) {
                             1
                         } else {
-                            4
+                            0
                         }
                     }
+//                    val cSignedInUser : SignedInUser = hiltViewModel()
+//                    val userData = cSignedInUser.signedInUserData.collectAsState().value
+//                    userType = if (userData.userId == null){
+//                         1
+//                    } else {
+//                        0
+//                    }
+
                     val launcher =
                         rememberLauncherForActivityResult(
                             contract = ActivityResultContracts.StartIntentSenderForResult()
@@ -108,12 +104,13 @@ class MainActivity : ComponentActivity() {
                                 Toast.LENGTH_LONG
                             ).show()
                             viewModel.resetState()
+                            userType = 0
                         }
 
                     }
                     when (userType) {
                         1 -> {
-                            LoginPage(
+                            LoginScreen(
                                 state = state,
                                 onSignInClick = {
                                     lifecycleScope.launch {
@@ -123,10 +120,9 @@ class MainActivity : ComponentActivity() {
                                                 signInIntentSender ?: return@launch
                                             ).build()
                                         )
-                                        signedInUser = googleAuthUiClient.getSignedInUser()
                                     }
                                 },
-                                isGuest = { userType = it },
+                                userType = { userType = it },
                             )
                         }
 
@@ -141,10 +137,9 @@ class MainActivity : ComponentActivity() {
                                                 signInIntentSender ?: return@launch
                                             ).build()
                                         )
-                                        signedInUser = googleAuthUiClient.getSignedInUser()
                                     }
                                 },
-                                isGuest = { userType = it }
+                                userType = { userType = it }
                             )
                         }
 
@@ -155,21 +150,10 @@ class MainActivity : ComponentActivity() {
                         else -> {
                             MainScreenAfterSignIn(
                                 navController = navController,
-                                lifecycleScope = lifecycleScope,
-                                googleAuthUiClient = googleAuthUiClient,
-                                context = applicationContext,
-                                isSigned = {
-                                    isSignedIn = !isSignedIn
-                                },
                                 isGuest = {
                                     userType = it
                                     navController.navigate(NavigationRoutes.Home.route)
-
                                 },
-                                signedInUser = signedInUser
-                                ,
-                                state = state,
-                                onSignInClick = {},
                             )
                         }
                     }

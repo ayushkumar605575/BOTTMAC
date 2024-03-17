@@ -1,11 +1,10 @@
-package com.bottmac.bottmac.screens
+package com.bottmac.bottmac.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.Money
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search

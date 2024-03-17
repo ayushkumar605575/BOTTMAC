@@ -1,6 +1,5 @@
 package com.bottmac.bottmac.screens
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -31,131 +30,19 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.bottmac.bottmac.R
-import com.bottmac.bottmac.presentation.google_sign_in.GoogleAuthUiClient
-import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
-import com.bottmac.bottmac.presentation.google_sign_in.UserData
+import com.bottmac.bottmac.navigation.BottomBar
+import com.bottmac.bottmac.navigation.NavGraph
+import com.bottmac.bottmac.navigation.NavigationRoutes
 import kotlinx.coroutines.launch
-
-
-@Composable
-fun MainScreen(
-    navController: NavHostController,
-    lifecycleScope: LifecycleCoroutineScope,
-    googleAuthUiClient: GoogleAuthUiClient,
-    context: Context
-) {
-//    var isSignedIn by rememberSaveable {
-//        mutableStateOf(false)
-//    }
-//    var isGuest by rememberSaveable {
-//        mutableStateOf(false)
-//    }
-//    val viewModel = viewModel<SignInViewModel>()
-//    val state by viewModel.state.collectAsStateWithLifecycle()
-//
-//    LaunchedEffect(key1 = Unit) {
-//        if (googleAuthUiClient.getSignedInUser() != null) {
-//            isSignedIn = !isSignedIn
-////            navController.navigate(NavigationRoutes.Home.route)
-//        }
-//    }
-//
-//    if (!isSignedIn && !isGuest) {
-//        val launcher =
-//            rememberLauncherForActivityResult(
-//                contract = ActivityResultContracts.StartIntentSenderForResult()
-//            ) { result ->
-//                if (result.resultCode == ComponentActivity.RESULT_OK) {
-//                    lifecycleScope.launch {
-//                        val signInResult = googleAuthUiClient.signInWithIntent(
-//                            intent = result.data ?: return@launch
-//                        )
-//                        viewModel.onSignInResult(signInResult)
-//                    }
-//                }
-//            }
-//        LaunchedEffect(key1 = state.isSignInSuccessful) {
-//            if (state.isSignInSuccessful) {
-//                Toast.makeText(
-//                    context,
-//                    "User Successfully Logged In",
-//                    Toast.LENGTH_LONG
-//                ).show()
-//                isSignedIn = !isSignedIn
-////            navController.navigate(NavigationRoutes.Home.route)
-//                viewModel.resetState()
-//            }
-//
-//        }
-//        NavGraph(
-//            state = state,
-//            onSignInClick = {
-//                lifecycleScope.launch {
-//                val signInIntentSender = googleAuthUiClient.signIn()
-//                launcher.launch(
-//                    IntentSenderRequest.Builder(
-//                        signInIntentSender ?: return@launch
-//                    ).build()
-//                )
-//            } },
-//            navController = navController,
-//            paddingValues = PaddingValues(24.dp),
-//            lifecycleScope = lifecycleScope,
-//            googleAuthUiClient = googleAuthUiClient,
-//            context = context,
-//            isGuest = {
-//                isGuest = !isGuest
-//                navController.navigate(NavigationRoutes.Home.route)
-//                      },
-//            isSigned = { isSignedIn = !isSignedIn }
-//        )
-//        LoginPage(
-//            state = state,
-//            onSignInClick = {
-//
-//            },
-//            navController = navController
-//        )
-//    } else {
-
-    }
-
-
-//    val navController = rememberNavController()
-
-
-//                    LoginPage()
-//                    println(isComp.isCompleted)
-//                    if (isComp.isCompleted) {
-//                        LazyColumn {
-//                            items(res) { productItem ->
-//                                ProductCard(
-//                                    productName = productItem.productName,
-//                                    productsFeatures = productItem.productFeatures.split("\\n"),
-//                                    productsImages = productItem.productImage
-//                                )
-//                                Spacer(modifier = Modifier.height(8.dp))
-//                            }
-//                        }
-//                    }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreenAfterSignIn(
     navController: NavHostController,
-    lifecycleScope: LifecycleCoroutineScope,
-    googleAuthUiClient: GoogleAuthUiClient,
-    context: Context,
-    isSigned: () -> Unit,
     isGuest: (Int) -> Unit,
-    state: SignedInState,
-    onSignInClick: () -> Unit,
-    signedInUser: UserData?
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -163,7 +50,6 @@ fun MainScreenAfterSignIn(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-//                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(start = 12.dp, top = 8.dp)
@@ -246,19 +132,10 @@ fun MainScreenAfterSignIn(
             bottomBar = { BottomBar(navController = navController) }
         ) { paddingValues ->
             NavGraph(
-                state = state,
-                onSignInClick = onSignInClick,
                 navController = navController,
                 paddingValues = paddingValues,
-                lifecycleScope = lifecycleScope,
-                googleAuthUiClient = googleAuthUiClient,
-                context = context,
-//                isSigned = isSigned,
-                isGuest = { isGuest(it) },
-                signedInUser = signedInUser
+                userType = { isGuest(it) },
             )
-//                            LoginPage(paddingValues)
-//                        SignUpPage(paddingValues)
         }
     }
 }
