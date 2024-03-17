@@ -1,4 +1,4 @@
-package com.bottmac.bottmac.services
+package com.bottmac.bottmac.firebase_service
 
 import com.google.firebase.auth.FirebaseAuth
 

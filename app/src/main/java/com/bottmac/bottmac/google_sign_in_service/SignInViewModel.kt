@@ -1,4 +1,4 @@
-package com.bottmac.bottmac.presentation.google_sign_in
+package com.bottmac.bottmac.google_sign_in_service
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

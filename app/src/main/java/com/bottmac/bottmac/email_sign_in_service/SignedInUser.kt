@@ -1,11 +1,11 @@
-package com.bottmac.bottmac.presentation.email_sign_in
+package com.bottmac.bottmac.email_sign_in_service
 
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.bottmac.bottmac.presentation.google_sign_in.GoogleAuthUiClient
-import com.bottmac.bottmac.presentation.google_sign_in.UserData
+import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
+import com.bottmac.bottmac.google_sign_in_service.UserData
 import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,12 +23,12 @@ class SignedInUser @Inject constructor(application: Application) : AndroidViewMo
         get() = _signedInUserData.asStateFlow()
 
     private val context = getApplication<Application>()
-    private val googleAuthUiClient by lazy {
+    private val googleAuthUiClient: GoogleAuthUiClient =
         GoogleAuthUiClient(
             context = context.applicationContext,
             oneTapClient = Identity.getSignInClient(context.applicationContext)
         )
-    }
+
 
     init {
         viewModelScope.launch {

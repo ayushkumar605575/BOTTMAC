@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreenAfterSignIn(
     navController: NavHostController,
-    isGuest: (Int) -> Unit,
+    userType: (Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -134,7 +134,7 @@ fun MainScreenAfterSignIn(
             NavGraph(
                 navController = navController,
                 paddingValues = paddingValues,
-                userType = { isGuest(it) },
+                userType = { userType(it) },
             )
         }
     }

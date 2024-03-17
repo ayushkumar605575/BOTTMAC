@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -29,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.bottmac.bottmac.R
-import com.bottmac.bottmac.presentation.email_sign_in.SignedInUser
+import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 
 @Composable
 fun ProfileScreen(
@@ -71,7 +72,9 @@ fun ProfileScreen(
                     .padding(vertical = 8.dp, horizontal = 16.dp)
             ) {
                 AsyncImage(
-                    modifier = Modifier.clip(CircleShape),
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(100.dp),
                     model = userData.profilePicUrl?.ifEmpty { R.drawable.profile_placeholder },
                     placeholder = painterResource(id = R.drawable.profile_placeholder),
                     contentScale = ContentScale.Crop,
@@ -110,6 +113,12 @@ fun ProfileScreen(
                 item { Options(heading = "Edit Profile", subHeading = "1") }
                 item { HorizontalDivider() }
             }
+        }
+        Column(
+            modifier = modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+        ) {
             ElevatedButton(onClick = {
                 cSignedInUser.signOutCurrentUser()
                 userType(1)

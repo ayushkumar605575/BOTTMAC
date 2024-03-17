@@ -1,10 +1,9 @@
-package com.bottmac.bottmac.presentation.google_sign_in
+package com.bottmac.bottmac.google_sign_in_service
 
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import com.bottmac.bottmac.R
-import com.bottmac.bottmac.presentation.email_sign_in.EmailSignInSignUpClient
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -12,7 +11,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CancellationException
 
@@ -22,9 +20,8 @@ class GoogleAuthUiClient(
 ) {
     private val auth = Firebase.auth
     private val db = FirebaseFirestore.getInstance()
-    private var storageRef = FirebaseStorage.getInstance()
+//    private var storageRef = FirebaseStorage.getInstance()
 
-//    private val emailSignInSignUpClient = EmailSignInSignUpClient(context)
 
     suspend fun signIn(): IntentSender? {
         val result = try {
@@ -78,9 +75,10 @@ class GoogleAuthUiClient(
     }
 
     suspend fun getSignedInUser(): UserData {
-        if (auth.currentUser != null) {
-            val user = auth.currentUser!!
-            if (user.displayName!!.isNotBlank()) {
+        val user = auth.currentUser
+        if (user != null) {
+            println(user)
+            if (user.displayName?.isNotBlank() == true) {
                 return UserData(
                     userId = auth.currentUser!!.uid,
                     userName = user.displayName,

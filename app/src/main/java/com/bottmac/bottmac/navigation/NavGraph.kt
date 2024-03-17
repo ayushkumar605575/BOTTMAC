@@ -1,7 +1,5 @@
 package com.bottmac.bottmac.navigation
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
@@ -13,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -21,15 +18,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.bottmac.bottmac.presentation.profile.ProfileScreen
-import com.bottmac.bottmac.presentation.google_sign_in.GoogleAuthUiClient
-import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
-import com.bottmac.bottmac.presentation.google_sign_in.UserData
 import com.bottmac.bottmac.presentation.product_details.ProductScreen
 import com.bottmac.bottmac.screens.CartScreen
 import com.bottmac.bottmac.screens.FavScreen
 import com.bottmac.bottmac.screens.OrderScreen
-import com.bottmac.bottmac.screens.SearchScreen
-import kotlinx.coroutines.launch
+import com.bottmac.bottmac.presentation.product_search.SearchScreen
 
 @Composable
 fun NavGraph(
@@ -37,23 +30,12 @@ fun NavGraph(
     paddingValues: PaddingValues,
     userType: (Int) -> Unit
 ) {
-//    val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = NavigationRoutes.Home.route
     ) {
-
-//        composable(route = NavigationRoutes.SignIn.route) {
-//            LoginPage(state = state, onSignInClick = onSignInClick, navController = navController, isGuest = isGuest)
-//        }
-//
-//        composable(route = NavigationRoutes.SignUp.route) {
-//            SignUpPage(state = state, onSignInClick = onSignInClick, navController = navController, isGuest = isGuest)
-//        }
-        
-//    NavHost(navController = navController, startDestination = NavigationRoutes.SignIn.route) {
         composable(route = NavigationRoutes.Home.route) {
-            ProductScreen(modifier = Modifier.padding(paddingValues))
+            ProductScreen(modifier = Modifier.padding(paddingValues), userType = userType)
         }
         composable(route = NavigationRoutes.Cart.route) {
             CartScreen(modifier = Modifier.padding(paddingValues), navController)
@@ -73,9 +55,6 @@ fun NavGraph(
                 modifier = Modifier.padding(paddingValues)
             )
         }
-//        composable(route = NavigationRoutes.SignUp.route) {
-//            SignUpPage(paddingValues = paddingValues)
-//        }
     }
 }
 

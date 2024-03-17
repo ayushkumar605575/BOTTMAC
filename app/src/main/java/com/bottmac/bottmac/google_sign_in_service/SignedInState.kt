@@ -1,4 +1,4 @@
-package com.bottmac.bottmac.presentation.google_sign_in
+package com.bottmac.bottmac.google_sign_in_service
 
 data class SignedInState(
     val isSignInSuccessful: Boolean = false,

@@ -1,34 +1,73 @@
 package com.bottmac.bottmac.presentation.product_details
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bottmac.bottmac.productViewModel.ProductsViewModel
+import com.bottmac.bottmac.email_sign_in_service.SignedInUser
+import com.bottmac.bottmac.product_view_model.ProductsViewModel
 
 @Composable
-fun ProductScreen(modifier: Modifier) {
+fun ProductScreen(
+    modifier: Modifier,
+    userType: (Int) -> Unit
+) {
     val productsViewModel: ProductsViewModel = hiltViewModel()
     val products = productsViewModel.productItems.collectAsState().value
+    val cSignedInUser: SignedInUser = hiltViewModel()
+        val userData = cSignedInUser.signedInUserData.collectAsState().value
+    var productDetails by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var productDetailInd by rememberSaveable {
+        mutableIntStateOf(-1)
+    }
     if (products.isNotEmpty()) {
-        LazyColumn(
-            modifier = modifier
-        ) {
-            items(products) { product ->
-                ProductCard(
-                    productName = product.productName,
-                    productsFeatures = product.productFeatures.split("\\n"),
-                    productsImages = product.productImage
-                )
-            }
+        if (productDetails) {
+            ProductDetailsScreen(
+                modifier = modifier,
+                products[productDetailInd].productName,
+                products[productDetailInd].productFeatures.split("\\n"),
+                products[productDetailInd].productImage,
+                onBack = { productDetails = !productDetails },
+            )
+        } else {
+                LazyColumn(
+                    modifier = modifier
+                ) {
+                    items(products.size) { productInd ->
+                        ProductCard(
+                            productName = products[productInd].productName,
+                            productsFeatures = products[productInd].productFeatures.split("\\n"),
+                            productsImages = products[productInd].productImage
+                        ) {
+                            if (userData.userId == null) {
+                                userType(1)
+                            } else {
+                                productDetailInd = productInd
+                                productDetails = !productDetails
+                            }
+                        }
+                    }
+                }
+
         }
     } else {
-        Column {
-            Text(text = "Unable to Fetch data")
-        }
+        Column(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) { CircularProgressIndicator() }
     }
 }
