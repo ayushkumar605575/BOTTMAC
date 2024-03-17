@@ -50,11 +50,8 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 fun SignUpPage(
     state: SignedInState,
     onSignInClick: () -> Unit,
-//    navController: NavHostController,
     isGuest: (Int) -> Unit
 ) {
-//    val getDefaultLangCode = getDefaultLangCode() // Auto-detect language
-//    val getDefaultPhoneCode = getDefaultPhoneCode()
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
     var email by rememberSaveable {
@@ -182,7 +179,7 @@ fun SignUpPage(
                     GoogleOrGuest(
                         state = state,
                         onSignInClick = onSignInClick,
-                        isGuest = { isGuest(0) }
+                        isGuest = { isGuest(1) }
                     )
                 }
                 item {

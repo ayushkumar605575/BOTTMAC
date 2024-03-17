@@ -21,13 +21,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.bottmac.bottmac.R
+import com.bottmac.bottmac.presentation.google_sign_in.GoogleAuthUiClient
 import com.bottmac.bottmac.presentation.google_sign_in.UserData
+import com.google.android.gms.auth.api.identity.Identity
 
 @Composable
 fun ProfileScreen(
@@ -35,6 +38,13 @@ fun ProfileScreen(
     onSignOut: () -> Unit,
     modifier: Modifier
 ) {
+//    val context = LocalContext.current
+//    val googleAuthUiClient by lazy {
+//        GoogleAuthUiClient(
+//            context = context,
+//            oneTapClient = Identity.getSignInClient(context)
+//        )
+//    }
     println(userData)
     Column(
         modifier = modifier

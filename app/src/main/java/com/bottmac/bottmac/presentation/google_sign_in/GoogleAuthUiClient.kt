@@ -24,7 +24,7 @@ class GoogleAuthUiClient(
     private val db = FirebaseFirestore.getInstance()
     private var storageRef = FirebaseStorage.getInstance()
 
-    private val emailSignInSignUpClient = EmailSignInSignUpClient(context)
+//    private val emailSignInSignUpClient = EmailSignInSignUpClient(context)
 
     suspend fun signIn(): IntentSender? {
         val result = try {

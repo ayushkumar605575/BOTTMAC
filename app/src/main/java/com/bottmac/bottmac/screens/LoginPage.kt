@@ -1,6 +1,5 @@
 package com.bottmac.bottmac.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,10 +27,8 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -62,12 +59,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.presentation.email_sign_in.EmailSignInSignUpClient
 import com.bottmac.bottmac.presentation.google_sign_in.SignedInState
-import com.bottmac.bottmac.presentation.google_sign_in.UserData
-import com.bottmac.bottmac.presentation.signed_in_user.SignedInUserScreen
 import com.bottmac.bottmac.ui.theme.btnPrimary
 import com.bottmac.bottmac.ui.theme.btnSecondary
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -77,10 +71,7 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 fun LoginPage(
     state: SignedInState,
     onSignInClick: () -> Unit,
-    navController: NavHostController,
     isGuest: (Int) -> Unit,
-    isSignedInUser: Boolean,
-    signedInUserData: UserData?
 ) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
@@ -131,20 +122,6 @@ fun LoginPage(
                     )
                     TextButton(onClick = { /*TODO*/ }) {
                         Text(text = "Forgot Password?")
-                    }
-                    if (isSignedInUser) {
-                        ElevatedCard(
-                            modifier = Modifier,
-
-                        ) {
-                            TextButton(onClick = {
-                                isGuest(0)
-                                }
-                            ) {
-                                Text(text = "Sign in as ${signedInUserData?.email}")
-                            }
-
-                        }
                     }
                 }
             }

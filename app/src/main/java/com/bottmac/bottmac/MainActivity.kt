@@ -8,22 +8,24 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.bottmac.bottmac.api.ProductsApi
 import com.bottmac.bottmac.presentation.google_sign_in.GoogleAuthUiClient
-import com.bottmac.bottmac.presentation.google_sign_in.SignInResult
 import com.bottmac.bottmac.presentation.google_sign_in.SignInViewModel
 import com.bottmac.bottmac.presentation.google_sign_in.UserData
 import com.bottmac.bottmac.screens.LoginPage
@@ -33,6 +35,8 @@ import com.bottmac.bottmac.screens.SignUpPage
 import com.bottmac.bottmac.ui.theme.BOTTMACTheme
 import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -63,16 +67,24 @@ class MainActivity : ComponentActivity() {
                     var userType by rememberSaveable {       // 1 -> Sign In
                         // 2 -> Sign Up
                         // 0 -> Guest
-                        mutableIntStateOf(1)
-                    }
-                    var isSignedIn by rememberSaveable {
-                        mutableStateOf(false)
+                        mutableIntStateOf(3)
                     }
                     var signedInUser by rememberSaveable {
                         mutableStateOf<UserData?>(null)
                     }
+                    var isSignedIn by rememberSaveable {
+                        mutableStateOf(false)
+                    }
+
+//                    var signedInUser: StateFlow<UserData?>
                     LaunchedEffect(key1 = Unit) {
                         signedInUser = googleAuthUiClient.getSignedInUser()
+                        println(signedInUser)
+                        userType = if (signedInUser == null) {
+                            1
+                        } else {
+                            4
+                        }
                     }
                     val launcher =
                         rememberLauncherForActivityResult(
@@ -89,7 +101,7 @@ class MainActivity : ComponentActivity() {
                         }
                     LaunchedEffect(key1 = state.isSignInSuccessful) {
                         if (state.isSignInSuccessful) {
-                        println("RUNNED")
+//                        println("RUNNED")
                             Toast.makeText(
                                 applicationContext,
                                 "User Successfully Logged In",
@@ -114,10 +126,7 @@ class MainActivity : ComponentActivity() {
                                         signedInUser = googleAuthUiClient.getSignedInUser()
                                     }
                                 },
-                                navController = navController,
                                 isGuest = { userType = it },
-                                isSignedInUser = signedInUser != null,
-                                signedInUserData = signedInUser
                             )
                         }
 
@@ -138,6 +147,11 @@ class MainActivity : ComponentActivity() {
                                 isGuest = { userType = it }
                             )
                         }
+
+                        3 -> {
+                            CircularProgressIndicator(Modifier.size(240.dp))
+                        }
+
                         else -> {
                             MainScreenAfterSignIn(
                                 navController = navController,
