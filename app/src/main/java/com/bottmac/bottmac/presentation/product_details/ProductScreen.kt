@@ -3,12 +3,12 @@ package com.bottmac.bottmac.presentation.product_details
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -21,14 +21,15 @@ fun ProductScreen(
     modifier: Modifier,
     products: List<ProductItem>,
     userData: UserData,
-    userType: (Int) -> Unit
+    productDetails: Boolean,
+    onProductDetails: () -> Unit,
+    userType: (Int) -> Unit,
 ) {
-    var productDetails by rememberSaveable {
-        mutableStateOf(false)
-    }
+
     var productDetailInd by rememberSaveable {
         mutableIntStateOf(-1)
     }
+
     if (products.isNotEmpty()) {
         if (productDetails) {
             ProductDetailsScreen(
@@ -36,11 +37,11 @@ fun ProductScreen(
                 products[productDetailInd].productName,
                 products[productDetailInd].productFeatures.split("\\n"),
                 products[productDetailInd].productImage,
-                onBack = { productDetails = !productDetails },
+                onBack = onProductDetails//{ onProductDetails = !productDetails },
             )
         } else {
                 LazyColumn(
-                    modifier = modifier
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     items(products.size) { productInd ->
                         ProductCard(
@@ -52,7 +53,7 @@ fun ProductScreen(
                                 userType(1)
                             } else {
                                 productDetailInd = productInd
-                                productDetails = !productDetails
+                                onProductDetails()
                             }
                         }
                     }

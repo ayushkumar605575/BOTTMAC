@@ -18,7 +18,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,7 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
@@ -109,11 +107,12 @@ fun ProfileScreen(
             HorizontalDivider()
             LazyColumn {
                 item { Options(heading = "My Orders", subHeading = "1") }
-                item { Options(heading = "Shipping Address", subHeading = "1") }
-                item { Options(heading = "My reviews", subHeading = "1") }
-                item { Options(heading = "Edit Profile", subHeading = "1") }
                 item { HorizontalDivider() }
+                item { Options(heading = "Shipping Address", subHeading = "1") }
+                item { HorizontalDivider() }
+                item { Options(heading = "Edit Profile", subHeading = "1") }
             }
+            HorizontalDivider()
         }
         Column(
             modifier = modifier.fillMaxSize(),

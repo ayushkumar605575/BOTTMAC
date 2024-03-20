@@ -5,23 +5,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,13 +27,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.navigation.BottomBar
 import com.bottmac.bottmac.navigation.NavGraph
-import com.bottmac.bottmac.navigation.NavigationRoutes
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,6 +38,9 @@ fun MainScreenAfterSignIn(
     navController: NavHostController,
     userType: (Int) -> Unit,
 ) {
+    var isSearchActive by rememberSaveable {
+        mutableStateOf(false)
+    }
 //    val scope = rememberCoroutineScope()
 //    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 //    ModalNavigationDrawer(
@@ -116,10 +113,11 @@ fun MainScreenAfterSignIn(
                     },
                     actions = {
                         IconButton(onClick = {
-                            navController.navigate(NavigationRoutes.Search.route) {
-                                popUpTo(navController.graph.findStartDestination().id)
-                                launchSingleTop = true
-                            }
+                            isSearchActive = !isSearchActive
+//                            navController.navigate(NavigationRoutes.Search.route) {
+//                                popUpTo(navController.graph.findStartDestination().id)
+//                                launchSingleTop = true
+//                            }
                         }) {
                             Icon(
                                 Icons.Default.Search,
@@ -135,6 +133,7 @@ fun MainScreenAfterSignIn(
                 navController = navController,
                 paddingValues = paddingValues,
                 userType = { userType(it) },
+                isSearchActive = isSearchActive
             )
         }
     }

@@ -1,7 +1,6 @@
 package com.bottmac.bottmac.di
 
 import com.bottmac.bottmac.api.ProductsApi
-import com.google.api.AnnotationsProto.http
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -21,7 +21,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.presentation.profile.ProfileScreen
-import com.bottmac.bottmac.presentation.product_details.ProductScreen
 import com.bottmac.bottmac.screens.CartScreen
 import com.bottmac.bottmac.screens.FavScreen
 import com.bottmac.bottmac.screens.OrderScreen
@@ -31,8 +30,10 @@ import com.bottmac.bottmac.product_view_model.ProductsViewModel
 fun NavGraph(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    userType: (Int) -> Unit
-) {
+    userType: (Int) -> Unit,
+    isSearchActive: Boolean,
+    ) {
+
     NavHost(
         navController = navController,
         startDestination = NavigationRoutes.Home.route
@@ -42,7 +43,13 @@ fun NavGraph(
             val userData = cSignedInUser.signedInUserData.collectAsState().value
             val productsViewModel: ProductsViewModel = hiltViewModel()
             val products = productsViewModel.productItems.collectAsState().value
-            ProductScreen(modifier = Modifier.padding(paddingValues), products, userData, userType = userType)
+            SearchScreen(
+                modifier = Modifier.padding(paddingValues),
+                products = products,
+                userData = userData,
+                userType = userType,
+                isSearchActive = isSearchActive
+            )
         }
         composable(route = NavigationRoutes.Cart.route) {
             CartScreen(modifier = Modifier.padding(paddingValues), navController)
@@ -53,9 +60,19 @@ fun NavGraph(
         composable(route = NavigationRoutes.Fav.route) {
             FavScreen(modifier = Modifier.padding(paddingValues))
         }
-        composable(route = NavigationRoutes.Search.route) {
-            SearchScreen(Modifier.padding(paddingValues))
-        }
+//        composable(route = NavigationRoutes.Search.route) {
+//            val cSignedInUser: SignedInUser = hiltViewModel()
+//            val userData = cSignedInUser.signedInUserData.collectAsState().value
+//            val productsViewModel: ProductsViewModel = hiltViewModel()
+//            val products = productsViewModel.productItems.collectAsState().value
+//            SearchScreen(
+//                Modifier.padding(paddingValues),
+//                products = products,
+//                userData = userData,
+//                userType = userType,
+//                isSearchActive = isSearchActive
+//            )
+//        }
         composable(route = NavigationRoutes.Profile.route) {
             val cSignedInUser: SignedInUser = hiltViewModel()
             val userData = cSignedInUser.signedInUserData.collectAsState().value
