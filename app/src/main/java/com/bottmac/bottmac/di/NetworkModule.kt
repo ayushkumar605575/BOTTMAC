@@ -1,6 +1,7 @@
 package com.bottmac.bottmac.di
 
 import com.bottmac.bottmac.api.ProductsApi
+import com.google.api.AnnotationsProto.http
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +17,7 @@ class NetworkModule {
     @Singleton
     @Provides
     fun providesRetrofit(): Retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.0.104:8000/")
+        .baseUrl("http://192.168.29.117:8000/")//("http://192.168.0.104:8000/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

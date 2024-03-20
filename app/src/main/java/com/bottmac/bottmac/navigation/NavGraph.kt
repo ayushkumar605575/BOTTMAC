@@ -9,21 +9,24 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.presentation.profile.ProfileScreen
 import com.bottmac.bottmac.presentation.product_details.ProductScreen
 import com.bottmac.bottmac.screens.CartScreen
 import com.bottmac.bottmac.screens.FavScreen
 import com.bottmac.bottmac.screens.OrderScreen
 import com.bottmac.bottmac.presentation.product_search.SearchScreen
-
+import com.bottmac.bottmac.product_view_model.ProductsViewModel
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -35,7 +38,11 @@ fun NavGraph(
         startDestination = NavigationRoutes.Home.route
     ) {
         composable(route = NavigationRoutes.Home.route) {
-            ProductScreen(modifier = Modifier.padding(paddingValues), userType = userType)
+            val cSignedInUser: SignedInUser = hiltViewModel()
+            val userData = cSignedInUser.signedInUserData.collectAsState().value
+            val productsViewModel: ProductsViewModel = hiltViewModel()
+            val products = productsViewModel.productItems.collectAsState().value
+            ProductScreen(modifier = Modifier.padding(paddingValues), products, userData, userType = userType)
         }
         composable(route = NavigationRoutes.Cart.route) {
             CartScreen(modifier = Modifier.padding(paddingValues), navController)
@@ -50,9 +57,13 @@ fun NavGraph(
             SearchScreen(Modifier.padding(paddingValues))
         }
         composable(route = NavigationRoutes.Profile.route) {
+            val cSignedInUser: SignedInUser = hiltViewModel()
+            val userData = cSignedInUser.signedInUserData.collectAsState().value
             ProfileScreen(
                 userType = userType,
-                modifier = Modifier.padding(paddingValues)
+                modifier = Modifier.padding(paddingValues),
+                userData = userData,
+                cSignedInUser = cSignedInUser
             )
         }
     }
@@ -64,8 +75,8 @@ fun NavGraph(
 fun BottomBar(navController: NavHostController) {
     val screens = listOf(
         NavigationRoutes.Home,
-        NavigationRoutes.Cart,
-        NavigationRoutes.Profile
+//        NavigationRoutes.Cart,
+        NavigationRoutes.Profile,
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination

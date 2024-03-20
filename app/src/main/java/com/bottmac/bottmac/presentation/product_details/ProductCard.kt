@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,13 +87,13 @@ fun ProductCard(
                         textDecoration = TextDecoration.Underline
                     )
 
-                        Text(text = "• ${productsFeatures[0]}")
-                        Text(text = "• ${productsFeatures[1]}")
+                        Text(text = "• ${productsFeatures[0]}", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(text = "• ${productsFeatures[1]}", maxLines = 1, overflow = TextOverflow.Ellipsis)
 
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(end = 8.dp),
+                            .padding(end = 8.dp, bottom = 8.dp),
                         verticalAlignment = Alignment.Bottom,
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {

@@ -44,39 +44,39 @@ fun MainScreenAfterSignIn(
     navController: NavHostController,
     userType: (Int) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(start = 12.dp, top = 8.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.logo),
-                        contentDescription = null,
-                        modifier = Modifier.size(32.dp),
-                    )
-                    Text(
-                        text = stringResource(id = R.string.app_name),
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        fontSize = 20.sp,
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
-                }
-                NavigationDrawerItem(
-                    label = { Text(text = "Drawer Item") },
-                    selected = false,
-                    onClick = { /*TODO*/ }
-                )
-            }
-        }
-    )
-    {
+//    val scope = rememberCoroutineScope()
+//    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+//    ModalNavigationDrawer(
+//        drawerState = drawerState,
+//        drawerContent = {
+//            ModalDrawerSheet {
+//                Row(
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    modifier = Modifier.padding(start = 12.dp, top = 8.dp)
+//                ) {
+//                    Image(
+//                        painter = painterResource(id = R.drawable.logo),
+//                        contentDescription = null,
+//                        modifier = Modifier.size(32.dp),
+//                    )
+//                    Text(
+//                        text = stringResource(id = R.string.app_name),
+//                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+//                        fontSize = 20.sp,
+//                        fontFamily = FontFamily.SansSerif,
+//                        fontWeight = FontWeight.Bold,
+//                        modifier = Modifier.padding(start = 8.dp)
+//                    )
+//                }
+//                NavigationDrawerItem(
+//                    label = { Text(text = "Drawer Item") },
+//                    selected = false,
+//                    onClick = { /*TODO*/ }
+//                )
+//            }
+//        }
+//    )
+//    {
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -104,15 +104,15 @@ fun MainScreenAfterSignIn(
                         MaterialTheme.colorScheme.secondaryContainer
                     ),
                     navigationIcon = {
-                        IconButton(onClick = {
-                            scope.launch {
-                                drawerState.apply {
-                                    if (isClosed) open() else close()
-                                }
-                            }
-                        }) {
-                            Icon(Icons.Default.Menu, contentDescription = null)
-                        }
+//                        IconButton(onClick = {
+//                            scope.launch {
+//                                drawerState.apply {
+//                                    if (isClosed) open() else close()
+//                                }
+//                            }
+//                        }) {
+//                            Icon(Icons.Default.Menu, contentDescription = null)
+//                        }
                     },
                     actions = {
                         IconButton(onClick = {
@@ -138,4 +138,4 @@ fun MainScreenAfterSignIn(
             )
         }
     }
-}
+//}

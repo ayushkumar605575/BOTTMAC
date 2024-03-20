@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -14,19 +13,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.bottmac.bottmac.email_sign_in_service.SignedInUser
-import com.bottmac.bottmac.product_view_model.ProductsViewModel
+import com.bottmac.bottmac.google_sign_in_service.UserData
+import com.bottmac.bottmac.models.ProductItem
 
 @Composable
 fun ProductScreen(
     modifier: Modifier,
+    products: List<ProductItem>,
+    userData: UserData,
     userType: (Int) -> Unit
 ) {
-    val productsViewModel: ProductsViewModel = hiltViewModel()
-    val products = productsViewModel.productItems.collectAsState().value
-    val cSignedInUser: SignedInUser = hiltViewModel()
-        val userData = cSignedInUser.signedInUserData.collectAsState().value
     var productDetails by rememberSaveable {
         mutableStateOf(false)
     }

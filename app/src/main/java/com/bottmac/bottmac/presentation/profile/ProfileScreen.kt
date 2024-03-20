@@ -31,14 +31,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
+import com.bottmac.bottmac.google_sign_in_service.UserData
 
 @Composable
 fun ProfileScreen(
     modifier: Modifier,
-    userType: (Int) -> Unit
+    userType: (Int) -> Unit,
+    userData: UserData,
+    cSignedInUser: SignedInUser
 ) {
-    val cSignedInUser : SignedInUser = hiltViewModel()
-    val userData = cSignedInUser.signedInUserData.collectAsState().value
     println(userData)
     if (userData.userId == null) {
         Column(
