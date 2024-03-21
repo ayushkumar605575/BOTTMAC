@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.google_sign_in_service.SignedInState
 
@@ -32,7 +33,7 @@ import com.bottmac.bottmac.google_sign_in_service.SignedInState
 fun BrowseAsGuest(
     state: SignedInState,
     onSignInClick: () -> Unit,
-    userType: () -> Unit
+    navController: NavController
 ) {
 
     val context = LocalContext.current
@@ -66,7 +67,13 @@ fun BrowseAsGuest(
         }
 
         TextButton(
-            onClick = userType,
+            onClick = {
+                navController.navigate("main") {
+                    popUpTo("startUp") {
+                        inclusive = true
+                    }
+                }
+            },
             modifier = Modifier,
             colors = ButtonDefaults.textButtonColors(
                 contentColor = MaterialTheme.colorScheme.onSurface

@@ -41,7 +41,6 @@ fun SignUpScreen(
     state: SignedInState,
     onSignInClick: () -> Unit,
     navController: NavController,
-    userType: (Int) -> Unit,
 ) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
@@ -150,7 +149,6 @@ fun SignUpScreen(
                         email = email,
                         password = password,
                         isValidCredential = isValidCredential,
-                        onSignInClick = onSignInClick,
                         navController = navController,
                     )
                 }
@@ -170,7 +168,7 @@ fun SignUpScreen(
                     BrowseAsGuest(
                         state = state,
                         onSignInClick = onSignInClick,
-                        userType = { userType(0) }
+                        navController = navController
                     )
                 }
                 item {

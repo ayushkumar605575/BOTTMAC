@@ -1,5 +1,6 @@
 package com.bottmac.bottmac.navigation
 
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -11,10 +12,12 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,6 +52,7 @@ fun NavGraph(
     NavHost(navController = navController, startDestination = "startUp") {
         navigation(startDestination = NavigationRoutes.SignIn.route, route = "startUp") {
             composable(route = NavigationRoutes.SignIn.route) {
+                val context = LocalContext.current
                 val viewModel = it.sharedViewModel<SignInViewModel>(navController)
                 val scope = rememberCoroutineScope()
                 val state by viewModel.state.collectAsStateWithLifecycle()
@@ -64,6 +68,22 @@ fun NavGraph(
                         }
                     }
                 }
+                LaunchedEffect(key1 = state.isSignInSuccessful) {
+                    if (state.isSignInSuccessful) {
+                        Toast.makeText(
+                            context,
+                            "User Successfully Logged In",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        viewModel.resetState()
+                        navController.navigate(NavigationRoutes.Home.route) {
+                            popUpTo("startUp") {
+                                inclusive = true
+                            }
+                        }
+                    }
+
+                }
                 LoginScreen(
                     state = state, onSignInClick = {
                         scope.launch {
@@ -74,17 +94,9 @@ fun NavGraph(
                                 ).build()
                             )
                         }
-                        println("Yes")
-                        navController.navigate("main") {
-                            popUpTo("startUp") {
-                                inclusive = true
-                            }
-                        }
                     },
                     navController = navController
-                ) {
-
-                }
+                )
             }
             composable(route = NavigationRoutes.SignUp.route) {
                 val scope = rememberCoroutineScope()
@@ -115,9 +127,7 @@ fun NavGraph(
                         }
                     },
                     navController = navController
-                ) {
-
-                }
+                )
             }
         }
         navigation(startDestination = NavigationRoutes.Home.route, route = "main") {

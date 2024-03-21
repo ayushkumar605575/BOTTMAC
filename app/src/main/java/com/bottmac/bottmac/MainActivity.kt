@@ -1,20 +1,15 @@
 package com.bottmac.bottmac
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
-import com.bottmac.bottmac.google_sign_in_service.SignInViewModel
 import com.bottmac.bottmac.navigation.NavGraph
 import com.bottmac.bottmac.navigation.NavigationRoutes
 import com.bottmac.bottmac.ui.theme.BOTTMACTheme
@@ -43,13 +38,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    val viewModel = viewModel<SignInViewModel>()
-                    val state by viewModel.state.collectAsStateWithLifecycle()
-//                    var userType by rememberSaveable {       // 1 -> Sign In
-//                                                             // 2 -> Sign Up
-//                                                             // 0 -> Guest/User_Signed_In
-//                        mutableIntStateOf(3)
-//                    }
+//                    val viewModel = viewModel<SignInViewModel>()
+//                    val state by viewModel.state.collectAsStateWithLifecycle()
 
                     LaunchedEffect(key1 = Unit) {
                         if (googleAuthUiClient.getSignedInUser().userId != null) {
@@ -70,18 +60,7 @@ class MainActivity : ComponentActivity() {
 //                                }
 //                            }
 //                        }
-                    LaunchedEffect(key1 = state.isSignInSuccessful) {
-                        if (state.isSignInSuccessful) {
-                            Toast.makeText(
-                                applicationContext,
-                                "User Successfully Logged In",
-                                Toast.LENGTH_LONG
-                            ).show()
-                            viewModel.resetState()
-//                            userType = 0
-                        }
 
-                    }
                     NavGraph(navController = navController, googleAuthUiClient)
 //                    when (userType) {
 //                        1 -> {

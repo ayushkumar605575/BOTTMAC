@@ -42,7 +42,6 @@ fun LoginScreen(
     state: SignedInState,
     onSignInClick: () -> Unit,
     navController: NavController,
-    userType: (Int) -> Unit,
 ) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
@@ -121,7 +120,6 @@ fun LoginScreen(
                         email = email,
                         password = password,
                         isValidCredential = isValidCredential,
-                        onSignInClick = onSignInClick,
                         navController = navController,
                     )
                     HorizontalDivider(
@@ -137,7 +135,7 @@ fun LoginScreen(
                     BrowseAsGuest(
                         state = state,
                         onSignInClick = onSignInClick,
-                        userType = { userType(0) }
+                        navController = navController
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically

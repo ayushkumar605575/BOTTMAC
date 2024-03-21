@@ -32,7 +32,6 @@ import com.bottmac.bottmac.R
 import com.bottmac.bottmac.google_sign_in_service.UserData
 import com.bottmac.bottmac.models.ProductItem
 import com.bottmac.bottmac.navigation.BottomBar
-import com.bottmac.bottmac.navigation.NavigationRoutes
 import com.bottmac.bottmac.presentation.product_search.HomeScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,11 +75,6 @@ fun HomeScreenStructure(
                 },
                 actions = {
                     IconButton(onClick = {
-                        navController.navigate(NavigationRoutes.Home.route) {
-                            popUpTo(NavigationRoutes.Profile.route) {
-                                inclusive = true
-                            }
-                        }
                         isSearchActive = !isSearchActive
                     }) {
                         Icon(

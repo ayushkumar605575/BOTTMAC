@@ -43,7 +43,6 @@ fun SignInSignUpButton(
     email: String,
     password: String,
     isValidCredential: Boolean,
-    onSignInClick: () -> Unit,
     navController: NavController,
 ) {
     val emailSignInSignUpClient = EmailSignInSignUpClient()
@@ -60,7 +59,11 @@ fun SignInSignUpButton(
                 println(isVerifiedUser)
                 waiting = false
                 if (isVerifiedUser.first) {
-                    onSignInClick()
+                    navController.navigate("main") {
+                        popUpTo("startUp") {
+                            inclusive = true
+                        }
+                    }
                 } else {
                     if (isVerifiedUser.second == 0) {
                         println("Incorrect UserName or Password")
