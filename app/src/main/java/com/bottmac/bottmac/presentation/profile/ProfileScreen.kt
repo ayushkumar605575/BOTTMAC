@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -30,6 +31,7 @@ import coil.compose.AsyncImage
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.google_sign_in_service.UserData
+import com.bottmac.bottmac.presentation.product_search.ProfileOptions
 
 @Composable
 fun ProfileScreen(
@@ -38,6 +40,11 @@ fun ProfileScreen(
     userData: UserData,
     cSignedInUser: SignedInUser
 ) {
+    val profileOptions = listOf(
+        ProfileOptions.EditProfile,
+        ProfileOptions.ShippingAddress,
+        ProfileOptions.MyOrders,
+    )
     println(userData)
     if (userData.userId == null) {
         Column(
@@ -104,13 +111,12 @@ fun ProfileScreen(
                 }
             }
             Spacer(modifier = Modifier.height(44.dp))
-            HorizontalDivider()
             LazyColumn {
-                item { Options(heading = "My Orders", subHeading = "1") }
                 item { HorizontalDivider() }
-                item { Options(heading = "Shipping Address", subHeading = "1") }
-                item { HorizontalDivider() }
-                item { Options(heading = "Edit Profile", subHeading = "1") }
+                items(profileOptions) {profileOption ->
+                    Options(heading = profileOption.title, subHeading = profileOption.subTitle)
+                    HorizontalDivider()
+                }
             }
             HorizontalDivider()
         }
