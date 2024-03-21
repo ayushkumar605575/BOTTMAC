@@ -26,6 +26,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.google_sign_in_service.SignedInState
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.BrowseAsGuest
@@ -39,7 +40,8 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 fun SignUpScreen(
     state: SignedInState,
     onSignInClick: () -> Unit,
-    userType: (Int) -> Unit
+    navController: NavController,
+    userType: (Int) -> Unit,
 ) {
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
@@ -148,7 +150,8 @@ fun SignUpScreen(
                         email = email,
                         password = password,
                         isValidCredential = isValidCredential,
-                        userType = userType
+                        onSignInClick = onSignInClick,
+                        navController = navController,
                     )
                 }
                 item {
@@ -175,7 +178,7 @@ fun SignUpScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(text = "Already have account?")
-                        TextButton(onClick = { userType(1) }) {
+                        TextButton(onClick = { navController.popBackStack() /*userType(1)*/ }) {
                             Text(text = "SIGN IN")
                         }
                     }

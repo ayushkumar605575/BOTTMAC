@@ -25,9 +25,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.bottmac.bottmac.R
-import com.bottmac.bottmac.google_sign_in_service.SignedInState
 import com.bottmac.bottmac.firebase_service.FireBaseService
+import com.bottmac.bottmac.google_sign_in_service.SignedInState
+import com.bottmac.bottmac.navigation.NavigationRoutes
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.BrowseAsGuest
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.InputType
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.SignInSignUpButton
@@ -39,6 +41,7 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 fun LoginScreen(
     state: SignedInState,
     onSignInClick: () -> Unit,
+    navController: NavController,
     userType: (Int) -> Unit,
 ) {
     val passwordFocusRequester = FocusRequester()
@@ -118,7 +121,8 @@ fun LoginScreen(
                         email = email,
                         password = password,
                         isValidCredential = isValidCredential,
-                        userType = userType
+                        onSignInClick = onSignInClick,
+                        navController = navController,
                     )
                     HorizontalDivider(
                         modifier = Modifier.padding(
@@ -139,7 +143,10 @@ fun LoginScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(text = "Don't have an account?")
-                        TextButton(onClick = { userType(2) }) {
+                        TextButton(onClick = {
+                            navController.navigate(NavigationRoutes.SignUp.route)
+                            /*userType(2)*/
+                        }) {
                             Text(text = "SIGN UP")
                         }
                     }

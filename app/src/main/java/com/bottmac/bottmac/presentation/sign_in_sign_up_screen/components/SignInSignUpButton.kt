@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.bottmac.bottmac.email_sign_in_service.EmailSignInSignUpClient
 import com.bottmac.bottmac.ui.theme.btnPrimary
 import com.bottmac.bottmac.ui.theme.btnSecondary
@@ -42,7 +43,8 @@ fun SignInSignUpButton(
     email: String,
     password: String,
     isValidCredential: Boolean,
-    userType: (Int) -> Unit
+    onSignInClick: () -> Unit,
+    navController: NavController,
 ) {
     val emailSignInSignUpClient = EmailSignInSignUpClient()
     var waiting by rememberSaveable {
@@ -55,9 +57,10 @@ fun SignInSignUpButton(
         LaunchedEffect(key1 = Unit) {
             if (btnText == "SIGN IN") {
                 isVerifiedUser = emailSignInSignUpClient.signInWithEmailAndPassword(email, password)
+                println(isVerifiedUser)
                 waiting = false
                 if (isVerifiedUser.first) {
-                    userType(0)
+                    onSignInClick()
                 } else {
                     if (isVerifiedUser.second == 0) {
                         println("Incorrect UserName or Password")
@@ -72,7 +75,13 @@ fun SignInSignUpButton(
                     )
                 ) {
                     emailSignInSignUpClient.signOut()
-                    userType(1)
+                    navController.navigate("startUp") {
+                        popUpTo("mainS") {
+                            inclusive = true
+                        }
+                    }
+//                    onSignInClick()
+//                    userType(1)
                 } else {
                     println("Email or Password in incorrect")
                 }

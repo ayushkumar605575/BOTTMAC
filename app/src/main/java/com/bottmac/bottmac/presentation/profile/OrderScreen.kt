@@ -3,7 +3,6 @@ package com.bottmac.bottmac.presentation.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -24,14 +23,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import com.bottmac.bottmac.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShippingAddressScreenStructure(
-    navController: NavHostController
-) {
+fun OrderScreenStructure(navController: NavController) {
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -46,7 +44,7 @@ fun ShippingAddressScreenStructure(
                             modifier = Modifier.size(40.dp),
                         )
                         Text(
-                            text = ProfileOptions.ShippingAddress.title,
+                            text = ProfileOptions.MyOrders.title,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             fontSize = 28.sp,
                             fontFamily = FontFamily.SansSerif,
@@ -73,17 +71,16 @@ fun ShippingAddressScreenStructure(
         }
     ) { paddingValues ->
         println(navController.currentDestination?.route)
-        ShippingAddressScreen(modifier = Modifier.padding(paddingValues))
+        OrderScreen(modifier = Modifier.padding(paddingValues))
     }
 }
 
-@Composable
-fun ShippingAddressScreen(
-    modifier: Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
 
+@Composable
+fun OrderScreen(modifier: Modifier) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(text = "Order 1")
     }
 }

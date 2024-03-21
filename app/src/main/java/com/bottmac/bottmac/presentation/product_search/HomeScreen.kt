@@ -30,7 +30,7 @@ import com.bottmac.bottmac.presentation.product_details.ProductScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(
+fun HomeScreen(
     modifier: Modifier,
     products: List<ProductItem>,
     userData: UserData,

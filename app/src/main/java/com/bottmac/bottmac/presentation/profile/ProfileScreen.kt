@@ -1,5 +1,6 @@
 package com.bottmac.bottmac.presentation.profile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,15 +17,22 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,11 +41,91 @@ import coil.compose.AsyncImage
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.google_sign_in_service.UserData
+import com.bottmac.bottmac.navigation.BottomBar
+import com.bottmac.bottmac.navigation.NavigationRoutes
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProfileScreenStructure(
+    navController: NavHostController,
+    userData: UserData,
+    cSignedInUser: SignedInUser,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(start = 12.dp, top = 8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.logo),
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp),
+                        )
+                        Text(
+                            text = stringResource(id = R.string.app_name),
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            fontSize = 32.sp,
+                            fontFamily = FontFamily.SansSerif,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    MaterialTheme.colorScheme.secondaryContainer
+                ),
+                navigationIcon = {
+
+                },
+                actions = {
+//                    IconButton(onClick = {
+//                        navController.navigate(NavigationRoutes.Home.route) {
+//                            popUpTo(navController.graph.findStartDestination().id)
+//                            launchSingleTop = true
+//                        }
+//                        isSearchActive = !isSearchActive
+//                    }) {
+//                        Icon(
+//                            Icons.Default.Search,
+//                            contentDescription = "Search",
+//                        )
+//                    }
+                }
+            )
+        },
+        bottomBar = { BottomBar(navController = navController) }
+    ) { paddingValues ->
+        println(navController.currentDestination?.route)
+        ProfileScreen(
+            modifier = Modifier.padding(paddingValues),
+            userData = userData,
+            cSignedInUser = cSignedInUser,
+            navController = navController
+        )
+//        HomeScreen(
+//            modifier = Modifier.padding(paddingValues),
+//            products = products,
+//            userData = userData,
+//            userType = {},
+//            isSearchActive = isSearchActive
+//        )
+//        NavGraph(
+//            navController = navController,
+//            paddingValues = paddingValues,
+//            userType = { userType(it) },
+//            isSearchActive = isSearchActive
+//        )
+    }
+}
+
 
 @Composable
 fun ProfileScreen(
     modifier: Modifier,
-    userType: (Int) -> Unit,
     userData: UserData,
     cSignedInUser: SignedInUser,
     navController: NavHostController,
@@ -61,7 +149,11 @@ fun ProfileScreen(
             )
             Spacer(modifier = Modifier.height(12.dp))
             ElevatedButton(onClick = {
-                userType(1)
+                navController.navigate(NavigationRoutes.SignIn.route) {
+                    popUpTo("main") {
+                        inclusive = true
+                    }
+                }
             }) {
                 Text(text = "SIGN IN")
             }
@@ -131,7 +223,11 @@ fun ProfileScreen(
         ) {
             ElevatedButton(onClick = {
                 cSignedInUser.signOutCurrentUser()
-                userType(1)
+                navController.navigate(NavigationRoutes.SignIn.route) {
+                    popUpTo("main") {
+                        inclusive = true
+                    }
+                }
             }) {
                 Text(text = "Sign Out")
             }
