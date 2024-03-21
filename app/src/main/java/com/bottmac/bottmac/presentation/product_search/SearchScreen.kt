@@ -7,8 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -78,28 +79,39 @@ fun SearchScreen(
                     if (isActive) {
                         IconButton(onClick = {
                             query = ""
-                            isActive = false
                         }) {
-                            Icon(imageVector = Icons.Default.SearchOff, contentDescription = null)
+                            Icon(imageVector = Icons.Default.Clear, contentDescription = null)
+                        }
+                    }
+                },
+                leadingIcon = {
+                    if (isActive) {
+                        IconButton(onClick = {
+                            isActive = false
+                            productDetailView = false
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = null
+                            )
                         }
                     } else {
                         IconButton(onClick = {
-//                            isActive = true
                         }) {
                             Icon(imageVector = Icons.Default.Search, contentDescription = null)
                         }
                     }
                 },
-                leadingIcon = {
-
-                },
                 shadowElevation = 42.dp,
-                placeholder = { Text(text = "Search Here") }
+                placeholder = { Text(text = "Search Products") }
             ) {
                 Text(text = "My Searches")
             }
             Spacer(modifier = Modifier.height(4.dp))
             HorizontalDivider()
+        } else {
+            query = ""
+            queryProductItems = products
         }
         ProductScreen(
             modifier = Modifier,
@@ -111,7 +123,5 @@ fun SearchScreen(
             }) {
             userType(it)
         }
-
-
     }
 }

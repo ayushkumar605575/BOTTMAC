@@ -20,19 +20,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
+import com.bottmac.bottmac.presentation.product_search.SearchScreen
 import com.bottmac.bottmac.presentation.profile.ProfileScreen
+import com.bottmac.bottmac.product_view_model.ProductsViewModel
 import com.bottmac.bottmac.screens.CartScreen
 import com.bottmac.bottmac.screens.FavScreen
 import com.bottmac.bottmac.screens.OrderScreen
-import com.bottmac.bottmac.presentation.product_search.SearchScreen
-import com.bottmac.bottmac.product_view_model.ProductsViewModel
+
 @Composable
 fun NavGraph(
     navController: NavHostController,
     paddingValues: PaddingValues,
     userType: (Int) -> Unit,
     isSearchActive: Boolean,
-    ) {
+) {
 
     NavHost(
         navController = navController,
@@ -85,7 +86,6 @@ fun NavGraph(
         }
     }
 }
-
 
 
 @Composable

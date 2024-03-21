@@ -27,10 +27,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.navigation.BottomBar
 import com.bottmac.bottmac.navigation.NavGraph
+import com.bottmac.bottmac.navigation.NavigationRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,11 +115,11 @@ fun MainScreenAfterSignIn(
                     },
                     actions = {
                         IconButton(onClick = {
+                            navController.navigate(NavigationRoutes.Home.route) {
+                                popUpTo(navController.graph.findStartDestination().id)
+                                launchSingleTop = true
+                            }
                             isSearchActive = !isSearchActive
-//                            navController.navigate(NavigationRoutes.Search.route) {
-//                                popUpTo(navController.graph.findStartDestination().id)
-//                                launchSingleTop = true
-//                            }
                         }) {
                             Icon(
                                 Icons.Default.Search,

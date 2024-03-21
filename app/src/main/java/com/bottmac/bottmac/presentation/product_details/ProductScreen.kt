@@ -40,24 +40,24 @@ fun ProductScreen(
                 onBack = onProductDetails//{ onProductDetails = !productDetails },
             )
         } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(products.size) { productInd ->
-                        ProductCard(
-                            productName = products[productInd].productName,
-                            productsFeatures = products[productInd].productFeatures.split("\\n"),
-                            productsImages = products[productInd].productImage
-                        ) {
-                            if (userData.userId == null) {
-                                userType(1)
-                            } else {
-                                productDetailInd = productInd
-                                onProductDetails()
-                            }
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(products.size) { productInd ->
+                    ProductCard(
+                        productName = products[productInd].productName,
+                        productsFeatures = products[productInd].productFeatures.split("\\n"),
+                        productsImages = products[productInd].productImage
+                    ) {
+                        if (userData.userId == null) {
+                            userType(1)
+                        } else {
+                            productDetailInd = productInd
+                            onProductDetails()
                         }
                     }
                 }
+            }
 
         }
     } else {
