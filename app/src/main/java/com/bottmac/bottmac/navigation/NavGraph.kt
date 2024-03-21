@@ -20,8 +20,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
+import com.bottmac.bottmac.presentation.profile.ProfileOptions
 import com.bottmac.bottmac.presentation.product_search.SearchScreen
+import com.bottmac.bottmac.presentation.profile.EditProfileScreen
 import com.bottmac.bottmac.presentation.profile.ProfileScreen
+import com.bottmac.bottmac.presentation.profile.ShippingAddressScreen
 import com.bottmac.bottmac.product_view_model.ProductsViewModel
 import com.bottmac.bottmac.screens.CartScreen
 import com.bottmac.bottmac.screens.FavScreen
@@ -61,19 +64,6 @@ fun NavGraph(
         composable(route = NavigationRoutes.Fav.route) {
             FavScreen(modifier = Modifier.padding(paddingValues))
         }
-//        composable(route = NavigationRoutes.Search.route) {
-//            val cSignedInUser: SignedInUser = hiltViewModel()
-//            val userData = cSignedInUser.signedInUserData.collectAsState().value
-//            val productsViewModel: ProductsViewModel = hiltViewModel()
-//            val products = productsViewModel.productItems.collectAsState().value
-//            SearchScreen(
-//                Modifier.padding(paddingValues),
-//                products = products,
-//                userData = userData,
-//                userType = userType,
-//                isSearchActive = isSearchActive
-//            )
-//        }
         composable(route = NavigationRoutes.Profile.route) {
             val cSignedInUser: SignedInUser = hiltViewModel()
             val userData = cSignedInUser.signedInUserData.collectAsState().value
@@ -81,8 +71,22 @@ fun NavGraph(
                 userType = userType,
                 modifier = Modifier.padding(paddingValues),
                 userData = userData,
-                cSignedInUser = cSignedInUser
+                cSignedInUser = cSignedInUser,
+                navController = navController
             )
+        }
+
+        composable(ProfileOptions.MyOrders.routes) {
+//            val navArgument = it.arguments
+            OrderScreen(modifier = Modifier.padding(paddingValues), navController = navController)
+        }
+        composable(ProfileOptions.MyOrders.routes) {
+//            val navArgument = it.arguments
+            ShippingAddressScreen(modifier = Modifier.padding(paddingValues), navController = navController)
+        }
+        composable(ProfileOptions.EditProfile.routes) {
+//            val navArgument = it.arguments
+            EditProfileScreen(modifier = Modifier.padding(paddingValues), navController = navController)
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.bottmac.bottmac.presentation.profile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,23 +28,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.google_sign_in_service.UserData
-import com.bottmac.bottmac.presentation.product_search.ProfileOptions
 
 @Composable
 fun ProfileScreen(
     modifier: Modifier,
     userType: (Int) -> Unit,
     userData: UserData,
-    cSignedInUser: SignedInUser
+    cSignedInUser: SignedInUser,
+    navController: NavHostController,
 ) {
     val profileOptions = listOf(
-        ProfileOptions.EditProfile,
-        ProfileOptions.ShippingAddress,
         ProfileOptions.MyOrders,
+        ProfileOptions.ShippingAddress,
+        ProfileOptions.EditProfile,
     )
     println(userData)
     if (userData.userId == null) {
@@ -56,7 +58,7 @@ fun ProfileScreen(
                 text = "Sign In with your account",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
-                )
+            )
             Spacer(modifier = Modifier.height(12.dp))
             ElevatedButton(onClick = {
                 userType(1)
@@ -64,8 +66,7 @@ fun ProfileScreen(
                 Text(text = "SIGN IN")
             }
         }
-    }
-    else {
+    } else {
         Column(
             modifier = modifier
         )
@@ -113,12 +114,15 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(44.dp))
             LazyColumn {
                 item { HorizontalDivider() }
-                items(profileOptions) {profileOption ->
-                    Options(heading = profileOption.title, subHeading = profileOption.subTitle)
-                    HorizontalDivider()
+                items(profileOptions) { profileOption ->
+                    Options(
+                        heading = profileOption.title,
+                        subHeading = profileOption.subTitle,
+                        route = profileOption.routes,
+                        navController = navController
+                    )
                 }
             }
-            HorizontalDivider()
         }
         Column(
             modifier = modifier.fillMaxSize(),
@@ -129,7 +133,7 @@ fun ProfileScreen(
                 cSignedInUser.signOutCurrentUser()
                 userType(1)
             }) {
-                Text(text = "Sign OUT")
+                Text(text = "Sign Out")
             }
         }
     }
@@ -139,12 +143,17 @@ fun ProfileScreen(
 @Composable
 fun Options(
     heading: String,
-    subHeading: String
+    subHeading: String,
+    route: String,
+    navController: NavHostController,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable {
+                navController.navigate(route)
+            },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
