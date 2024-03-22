@@ -51,16 +51,19 @@ fun MainScreenStructure(
                         )
                         Text(
                             text = stringResource(id = R.string.app_name),
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            fontSize = 32.sp,
-                            fontFamily = FontFamily.SansSerif,
-                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontSize = 28.sp,
+//                            letterSpacing = 2.sp,
+//                            fontFamily = FontFamily.SansSerif,
+//                            fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    MaterialTheme.colorScheme.secondaryContainer
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+
                 ),
                 navigationIcon = {
 

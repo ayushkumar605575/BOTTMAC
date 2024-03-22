@@ -11,7 +11,7 @@ class FireBaseService {
     }
     suspend fun getTokenId(): String {
         println(auth.currentUser?.getIdToken(true)?.await()?.token?.length ?: "")
-        return auth.currentUser?.getIdToken(true)?.await()?.token ?: ""
+        return auth.currentUser?.getIdToken(true)?.await()?.token ?: "BottMac@Guest?User"
     }
 
     fun sendPasswordResetLink(email: String) {

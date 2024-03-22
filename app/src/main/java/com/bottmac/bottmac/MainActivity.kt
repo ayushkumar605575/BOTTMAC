@@ -4,9 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
@@ -38,12 +43,20 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
+//                    var isUserAlready by rememberSaveable {
+//                        mutableStateOf(false)
+//                    }
                     LaunchedEffect(key1 = Unit) {
                         if (googleAuthUiClient.getSignedInUser().userId != null) {
                             navController.navigate(NavigationRoutes.Home.route)
                         }
+//                        isUserAlready = true
                     }
-                    NavGraph(navController = navController, googleAuthUiClient)
+//                    if (isUserAlready) {
+                        NavGraph(navController = navController, googleAuthUiClient)
+//                    } else {
+//                        CircularProgressIndicator()
+//                    }
                 }
             }
         }

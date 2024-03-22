@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -142,9 +143,9 @@ fun NavGraph(
         navigation(startDestination = NavigationRoutes.Home.route, route = "main") {
             var screen: @Composable (PaddingValues) -> Unit
             composable(NavigationRoutes.Home.route) {
-                val cSignedInUser: SignedInUser = hiltViewModel()
+                val cSignedInUser: SignedInUser = it.sharedViewModel<SignedInUser>(navController = navController)//hiltViewModel()
                 val userData = cSignedInUser.signedInUserData.collectAsState().value
-                val productsViewModel: ProductsViewModel = hiltViewModel()
+                val productsViewModel: ProductsViewModel = it.sharedViewModel(navController = navController)//hiltViewModel<ProductsViewModel>()
                 val products = productsViewModel.productItems.collectAsState().value
                 var isSearchActive by rememberSaveable {
                     mutableStateOf(false)
@@ -167,7 +168,7 @@ fun NavGraph(
                 )
             }
             composable(NavigationRoutes.Profile.route) {
-                val cSignedInUser: SignedInUser = hiltViewModel()
+                val cSignedInUser: SignedInUser = it.sharedViewModel(navController = navController)//hiltViewModel()
                 val userData = cSignedInUser.signedInUserData.collectAsState().value
                 screen = {
                     ProfileScreen(
@@ -225,11 +226,11 @@ fun NavGraph(
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
     navController: NavHostController
 ): T {
-    val navGraphRoute = destination.parent?.route ?: return viewModel()
+    val navGraphRoute = destination.parent?.route ?: return hiltViewModel()//viewModel()
     val parentEntry = remember(key1 = this) {
         navController.getBackStackEntry(navGraphRoute)
     }
-    return viewModel(parentEntry)
+    return hiltViewModel(parentEntry)
 }
 //
 //@Composable
@@ -353,6 +354,15 @@ fun RowScope.AddItem(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
-        }
+        },
+        colors = NavigationBarItemColors(
+            selectedIconColor = MaterialTheme.colorScheme.primary,
+            selectedTextColor = MaterialTheme.colorScheme.primary,
+            selectedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
+            unselectedIconColor = MaterialTheme.colorScheme.surface,
+            unselectedTextColor = MaterialTheme.colorScheme.surface,
+            disabledIconColor = MaterialTheme.colorScheme.onSurface,
+            disabledTextColor = MaterialTheme.colorScheme.onSurface
+        )
     )
 }
