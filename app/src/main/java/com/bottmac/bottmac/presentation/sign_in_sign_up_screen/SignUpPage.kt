@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -59,6 +60,9 @@ fun SignUpScreen(
     var confirmPassword by rememberSaveable {
         mutableStateOf("")
     }
+    var isChecked by rememberSaveable {
+        mutableStateOf(false)
+    }
     ProvideWindowInsets {
         Column(
             modifier = Modifier
@@ -98,7 +102,9 @@ fun SignUpScreen(
                         }),
                         focusRequester = passwordFocusRequester,
                         value = phoneNumberWithCountryCode,
-                        onValueChange = { phoneNumberWithCountryCode = it }
+                        onValueChange = {
+                            phoneNumberWithCountryCode = it
+                        }
                     )
                 }
                 item {
@@ -139,9 +145,15 @@ fun SignUpScreen(
                         hasError = !isValidPassword(confirmPassword) || (password != confirmPassword)
                     )
                 }
+                item {
+                    Row {
+                        Checkbox(checked = isChecked, onCheckedChange = { isChecked = !isChecked })
+                        Text(text = "Provided details may be used by the company to contact you")
+                    }
+                }
                 item { Spacer(modifier = Modifier.height(20.dp)) }
                 item {
-                    val isValidCredential = (isValidEmail(email) && isValidPassword(password))
+                    val isValidCredential = (isValidEmail(email) && isValidPassword(password) && isChecked)
                     SignInSignUpButton(
                         btnText = "SIGN UP",
                         name = userName,

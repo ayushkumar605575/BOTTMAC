@@ -5,7 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -15,9 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,12 +40,14 @@ import androidx.navigation.navigation
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
 import com.bottmac.bottmac.google_sign_in_service.SignInViewModel
-import com.bottmac.bottmac.presentation.home_screen.HomeScreenStructure
-import com.bottmac.bottmac.presentation.profile.EditProfileScreenStructure
-import com.bottmac.bottmac.presentation.profile.OrderScreenStructure
+import com.bottmac.bottmac.presentation.home_screen.MainScreenStructure
+import com.bottmac.bottmac.presentation.product_search.HomeScreen
+import com.bottmac.bottmac.presentation.profile.EditProfileScreen
+import com.bottmac.bottmac.presentation.profile.OrderScreen
+import com.bottmac.bottmac.presentation.profile.ProfileOptionNavigationStructure
 import com.bottmac.bottmac.presentation.profile.ProfileOptions
-import com.bottmac.bottmac.presentation.profile.ProfileScreenStructure
-import com.bottmac.bottmac.presentation.profile.ShippingAddressScreenStructure
+import com.bottmac.bottmac.presentation.profile.ProfileScreen
+import com.bottmac.bottmac.presentation.profile.ShippingAddressScreen
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.LoginScreen
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.SignUpScreen
 import com.bottmac.bottmac.product_view_model.ProductsViewModel
@@ -82,10 +91,10 @@ fun NavGraph(
                             }
                         }
                     }
-
                 }
                 LoginScreen(
-                    state = state, onSignInClick = {
+                    state = state,
+                    onSignInClick = {
                         scope.launch {
                             val signInIntentSender = googleAuthUiClient.signIn()
                             launcher.launch(
@@ -131,35 +140,80 @@ fun NavGraph(
             }
         }
         navigation(startDestination = NavigationRoutes.Home.route, route = "main") {
+            var screen: @Composable (PaddingValues) -> Unit
             composable(NavigationRoutes.Home.route) {
                 val cSignedInUser: SignedInUser = hiltViewModel()
                 val userData = cSignedInUser.signedInUserData.collectAsState().value
                 val productsViewModel: ProductsViewModel = hiltViewModel()
                 val products = productsViewModel.productItems.collectAsState().value
-                HomeScreenStructure(navController = navController, userData, products)
+                var isSearchActive by rememberSaveable {
+                    mutableStateOf(false)
+                }
+                screen = {
+                    HomeScreen(
+                        modifier = Modifier.padding(it),
+                        products = products,
+                        userData = userData,
+                        isSearchActive = isSearchActive,
+                        navController = navController
+                    )
+                }
+                MainScreenStructure(
+                    navController = navController,
+                    onSearchActive = {
+                        isSearchActive = !isSearchActive
+                    },
+                    screen = screen
+                )
             }
-        }
-        navigation(startDestination = NavigationRoutes.Profile.route, route = "Profile") {
             composable(NavigationRoutes.Profile.route) {
                 val cSignedInUser: SignedInUser = hiltViewModel()
                 val userData = cSignedInUser.signedInUserData.collectAsState().value
-                ProfileScreenStructure(
+                screen = {
+                    ProfileScreen(
+                        modifier = Modifier.padding(it),
+                        userData = userData,
+                        cSignedInUser = cSignedInUser,
+                        navController = navController
+                    )
+                }
+                MainScreenStructure(
                     navController = navController,
-                    userData = userData,
-                    cSignedInUser = cSignedInUser
+                    onSearchActive = {},
+                    screen = screen
                 )
             }
+        }
+        navigation(startDestination = ProfileOptions.MyOrders.routes, route = "profileOptions") {
+            var profileOptionScreen: @Composable (PaddingValues) -> Unit
             composable(ProfileOptions.MyOrders.routes) {
-                OrderScreenStructure(navController = navController)
+                profileOptionScreen = {
+                    OrderScreen(modifier = Modifier.padding(it))
+                }
+                ProfileOptionNavigationStructure(
+                    navController = navController,
+                    title = ProfileOptions.MyOrders.title,
+                    screen = profileOptionScreen
+                )
             }
             composable(ProfileOptions.ShippingAddress.routes) {
-                ShippingAddressScreenStructure(
-                    navController = navController
+                profileOptionScreen = {
+                    ShippingAddressScreen(modifier = Modifier.padding(it))
+                }
+                ProfileOptionNavigationStructure(
+                    navController = navController,
+                    title = ProfileOptions.ShippingAddress.title,
+                    screen = profileOptionScreen
                 )
             }
             composable(ProfileOptions.EditProfile.routes) {
-                EditProfileScreenStructure(
-                    navController = navController
+                profileOptionScreen = {
+                    EditProfileScreen(modifier = Modifier.padding(it))
+                }
+                ProfileOptionNavigationStructure(
+                    navController = navController,
+                    title = ProfileOptions.EditProfile.title,
+                    screen = profileOptionScreen
                 )
             }
         }
@@ -275,16 +329,27 @@ fun RowScope.AddItem(
     NavigationBarItem(
         selected = currentDestination?.route == screen.route,
         alwaysShowLabel = currentDestination?.route == screen.route,
-        label = { Text(screen.title, color = MaterialTheme.colorScheme.primary) },
+        label = {
+            Text(
+                screen.title,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
+            )
+        },
         onClick = {
+            println(navController.graph.findStartDestination().id)
+            println(screen.route)
             navController.navigate(screen.route) {
-                popUpTo(navController.graph.findStartDestination().id)
-                launchSingleTop = true
+                popUpTo("main") {
+                    inclusive = false
+                }
+//                popUpTo(navController.graph.findStartDestination().id)
+//                launchSingleTop = true
             }
         },
         icon = {
             Icon(
-                imageVector = screen.icon,
+                imageVector = if (currentDestination?.route == screen.route) screen.selectedIcon else screen.unselectedIcon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )

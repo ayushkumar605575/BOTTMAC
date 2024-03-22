@@ -13,8 +13,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import com.bottmac.bottmac.google_sign_in_service.UserData
 import com.bottmac.bottmac.models.ProductItem
+import com.bottmac.bottmac.navigation.NavigationRoutes
 
 @Composable
 fun ProductScreen(
@@ -23,7 +25,7 @@ fun ProductScreen(
     userData: UserData,
     productDetails: Boolean,
     onProductDetails: () -> Unit,
-    userType: (Int) -> Unit,
+    navController: NavController
 ) {
 
     var productDetailInd by rememberSaveable {
@@ -50,7 +52,11 @@ fun ProductScreen(
                         productsImages = products[productInd].productImage
                     ) {
                         if (userData.userId == null) {
-                            userType(1)
+                            navController.navigate(NavigationRoutes.SignIn.route) {
+                                popUpTo("main") {
+                                    inclusive = true
+                                }
+                            }
                         } else {
                             productDetailInd = productInd
                             onProductDetails()

@@ -38,91 +38,12 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-//                    val viewModel = viewModel<SignInViewModel>()
-//                    val state by viewModel.state.collectAsStateWithLifecycle()
-
                     LaunchedEffect(key1 = Unit) {
                         if (googleAuthUiClient.getSignedInUser().userId != null) {
                             navController.navigate(NavigationRoutes.Home.route)
                         }
                     }
-
-//                    val launcher =
-//                        rememberLauncherForActivityResult(
-//                            contract = ActivityResultContracts.StartIntentSenderForResult()
-//                        ) { result ->
-//                            if (result.resultCode == RESULT_OK) {
-//                                lifecycleScope.launch {
-//                                    val signInResult = googleAuthUiClient.signInWithIntent(
-//                                        intent = result.data ?: return@launch
-//                                    )
-//                                    viewModel.onSignInResult(signInResult)
-//                                }
-//                            }
-//                        }
-
                     NavGraph(navController = navController, googleAuthUiClient)
-//                    when (userType) {
-//                        1 -> {
-//                            LoginScreen(
-//                                state = state,
-//                                onSignInClick = {
-//                                    lifecycleScope.launch {
-//                                        val signInIntentSender = googleAuthUiClient.signIn()
-//                                        launcher.launch(
-//                                            IntentSenderRequest.Builder(
-//                                                signInIntentSender ?: return@launch
-//                                            ).build()
-//                                        )
-//                                    }
-//                                },
-//                                userType = { userType = it },
-//                            )
-//                        }
-//
-//                        2 -> {
-//                            SignUpScreen(
-//                                state = state,
-//                                onSignInClick = {
-//                                    lifecycleScope.launch {
-//                                        val signInIntentSender = googleAuthUiClient.signIn()
-//                                        launcher.launch(
-//                                            IntentSenderRequest.Builder(
-//                                                signInIntentSender ?: return@launch
-//                                            ).build()
-//                                        )
-//                                    }
-//                                },
-//                                userType = { userType = it }
-//                            )
-//                        }
-//
-//                        3 -> {
-//                            Column(
-//                                modifier = Modifier.fillMaxSize(),
-//                                horizontalAlignment = Alignment.CenterHorizontally,
-//                                verticalArrangement = Arrangement.Center
-//                            ){
-//                                CircularProgressIndicator(Modifier.size(80.dp))
-//                                Spacer(modifier = Modifier.height(20.dp))
-//                                Text(
-//                                    text = "Loading",
-//                                    fontStyle = FontStyle.Italic,
-//                                    fontSize = 20.sp
-//                                )
-//                            }
-//                        }
-//
-//                        else -> {
-//                            MainScreenAfterSignIn(
-//                                navController = navController,
-//                                userType = {
-//                                    userType = it
-//                                    navController.navigate(NavigationRoutes.Home.route)
-//                                },
-//                            )
-//                        }
-//                    }
                 }
             }
         }

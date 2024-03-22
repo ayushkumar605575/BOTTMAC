@@ -24,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.bottmac.bottmac.google_sign_in_service.UserData
 import com.bottmac.bottmac.models.ProductItem
 import com.bottmac.bottmac.presentation.product_details.ProductScreen
@@ -34,8 +35,8 @@ fun HomeScreen(
     modifier: Modifier,
     products: List<ProductItem>,
     userData: UserData,
-    userType: (Int) -> Unit,
-    isSearchActive: Boolean
+    isSearchActive: Boolean,
+    navController: NavController
 ) {
     var query by rememberSaveable {
         mutableStateOf("")
@@ -120,8 +121,8 @@ fun HomeScreen(
             productDetails = productDetailView,
             onProductDetails = {
                 productDetailView = !productDetailView
-            }) {
-            userType(it)
-        }
+            },
+            navController = navController
+        )
     }
 }
