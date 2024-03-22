@@ -1,14 +1,10 @@
 package com.bottmac.bottmac.repository
 
 import com.bottmac.bottmac.api.ProductsApi
+import com.bottmac.bottmac.firebase_service.FireBaseService
 import com.bottmac.bottmac.models.ProductItem
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 
 class GetProductItems @Inject constructor(private val productsApi: ProductsApi) {
@@ -16,8 +12,9 @@ class GetProductItems @Inject constructor(private val productsApi: ProductsApi) 
     val products: StateFlow<List<ProductItem>>
         get() = _products
 
+    private val auth = FireBaseService()
     suspend fun getProducts() {
-        val response = productsApi.getProducts()
+        val response = productsApi.getProducts(authorization = auth.getTokenId())
 //        println(response.)
 //            .enqueue(
 //            object:Callback<List<ProductItem>>{
