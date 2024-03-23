@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -47,17 +46,18 @@ fun ProductDetailsScreen(
         onBack()
     }
     Column(
-        modifier = modifier.fillMaxSize().padding(8.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(8.dp),
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         ElevatedCard {
             LazyRow {
                 items(productsImages) { productsImage ->
                     AsyncImage(
-                        modifier = Modifier.size(
-                            width = 400.dp,
-                            height = 350.dp
-                        ),
+                        modifier = Modifier
+                            .height(348.dp)
+                            .fillMaxWidth(),
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(
                                 Base64.decode(
@@ -70,6 +70,7 @@ fun ProductDetailsScreen(
                         contentScale = ContentScale.Crop,
                         contentDescription = null
                     )
+
                 }
             }
         }
