@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,8 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bottmac.bottmac.email_sign_in_service.EmailSignInSignUpClient
-import com.bottmac.bottmac.ui.theme.btnPrimary
-import com.bottmac.bottmac.ui.theme.btnSecondary
 
 @Composable
 fun SignInSignUpButton(
@@ -59,7 +58,7 @@ fun SignInSignUpButton(
                 println(isVerifiedUser)
                 waiting = false
                 if (isVerifiedUser.first) {
-                    navController.navigate("main") {
+                    navController.navigate("mainScreen") {
                         popUpTo("startUp") {
                             inclusive = true
                         }
@@ -79,12 +78,10 @@ fun SignInSignUpButton(
                 ) {
                     emailSignInSignUpClient.signOut()
                     navController.navigate("startUp") {
-                        popUpTo("mainS") {
+                        popUpTo("mainScreen") {
                             inclusive = true
                         }
                     }
-//                    onSignInClick()
-//                    userType(1)
                 } else {
                     println("Email or Password in incorrect")
                 }
@@ -131,8 +128,8 @@ fun SignInSignUpButton(
                     .background(
                         brush = Brush.horizontalGradient(
                             listOf(
-                                btnPrimary,
-                                btnSecondary
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.secondary
                             )
                         ),
                         shape = RoundedCornerShape(8.dp),

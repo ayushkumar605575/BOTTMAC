@@ -35,79 +35,12 @@ import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.google_sign_in_service.UserData
 import com.bottmac.bottmac.navigation.NavigationRoutes
 
-//
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun ProfileScreenStructure(
-//    navController: NavHostController,
-//    userData: UserData,
-//    cSignedInUser: SignedInUser,
-//) {
-//    Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = {
-//                    Row(
-//                        verticalAlignment = Alignment.CenterVertically,
-//                        modifier = Modifier.padding(start = 12.dp, top = 8.dp)
-//                    ) {
-//                        Image(
-//                            painter = painterResource(id = R.drawable.logo),
-//                            contentDescription = null,
-//                            modifier = Modifier.size(40.dp),
-//                        )
-//                        Text(
-//                            text = stringResource(id = R.string.app_name),
-//                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-//                            fontSize = 32.sp,
-//                            fontFamily = FontFamily.SansSerif,
-//                            fontWeight = FontWeight.Bold,
-//                            modifier = Modifier.padding(start = 8.dp)
-//                        )
-//                    }
-//                },
-//                colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                    MaterialTheme.colorScheme.secondaryContainer
-//                ),
-//                navigationIcon = {
-//
-//                },
-//                actions = {
-////                    IconButton(onClick = {
-////                        navController.navigate(NavigationRoutes.Home.route) {
-////                            popUpTo(navController.graph.findStartDestination().id)
-////                            launchSingleTop = true
-////                        }
-////                        isSearchActive = !isSearchActive
-////                    }) {
-////                        Icon(
-////                            Icons.Default.Search,
-////                            contentDescription = "Search",
-////                        )
-////                    }
-//                }
-//            )
-//        },
-//        bottomBar = { BottomBar(navController = navController) }
-//    ) { paddingValues ->
-//        println(navController.currentDestination?.route)
-//        ProfileScreen(
-//            modifier = Modifier.padding(paddingValues),
-//            userData = userData,
-//            cSignedInUser = cSignedInUser,
-//            navController = navController
-//        )
-//
-//    }
-//}
-
-
 @Composable
 fun ProfileScreen(
     modifier: Modifier,
     userData: UserData,
     cSignedInUser: SignedInUser,
-    navController: NavHostController,
+    primaryNavHostController: NavHostController
 ) {
     val profileOptions = listOf(
         ProfileOptions.MyOrders,
@@ -128,7 +61,7 @@ fun ProfileScreen(
             )
             Spacer(modifier = Modifier.height(12.dp))
             ElevatedButton(onClick = {
-                navController.navigate(NavigationRoutes.SignIn.route) {
+                primaryNavHostController.navigate(NavigationRoutes.SignIn.route) {
                     popUpTo("main") {
                         inclusive = true
                     }
@@ -190,7 +123,7 @@ fun ProfileScreen(
                         heading = profileOption.title,
                         subHeading = profileOption.subTitle,
                         route = profileOption.routes,
-                        navController = navController
+                        primaryNavHostController = primaryNavHostController
                     )
                 }
             }
@@ -202,7 +135,7 @@ fun ProfileScreen(
         ) {
             ElevatedButton(onClick = {
                 cSignedInUser.signOutCurrentUser()
-                navController.navigate(NavigationRoutes.SignIn.route) {
+                primaryNavHostController.navigate(NavigationRoutes.SignIn.route) {
                     popUpTo("main") {
                         inclusive = true
                     }
@@ -220,13 +153,13 @@ fun ProfileOptionsComposable(
     heading: String,
     subHeading: String,
     route: String,
-    navController: NavHostController,
+    primaryNavHostController: NavHostController,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navController.navigate(route)
+                primaryNavHostController.navigate(route)
             },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
