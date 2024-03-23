@@ -119,9 +119,6 @@ fun MainScreenStructure(
             }
 
             composable(route = NavigationRoutes.Profile.route) {
-//                val cSignedInUser =
-//                    it.sharedViewModel<SignedInUser>(navController = mainScreenNavController)
-//                val userData = cSignedInUser.signedInUserData.collectAsState().value
                 currentRoute = mainScreenNavController.currentDestination?.route.toString()
                 ProfileScreen(
                     modifier = Modifier.padding(paddingValues),
