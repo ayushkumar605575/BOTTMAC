@@ -21,8 +21,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,11 +34,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
 import com.bottmac.bottmac.google_sign_in_service.SignInViewModel
@@ -196,20 +197,23 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
     }
     return hiltViewModel(parentEntry)
 }
+
 @Composable
 fun BottomBar(navController: NavHostController) {
-    val screens = listOf(
+    val bottomNavigationRoutes = listOf(
         NavigationRoutes.Home,
         NavigationRoutes.Profile,
     )
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-
+    var selectedScreenInd by rememberSaveable {
+        mutableIntStateOf(0)
+    }
     NavigationBar {
-        screens.forEach { screen ->
+        bottomNavigationRoutes.forEachIndexed { index, bottomNavigationRoute ->
             AddItem(
-                screen = screen,
-                currentDestination = currentDestination,
+                index = index,
+                selectedScreenInd = selectedScreenInd,
+                onSelection = { selectedScreenInd = index },
+                bottomNavigationRoute = bottomNavigationRoute,
                 navController = navController
             )
         }
@@ -218,31 +222,36 @@ fun BottomBar(navController: NavHostController) {
 
 @Composable
 fun RowScope.AddItem(
-    screen: NavigationRoutes,
-    currentDestination: NavDestination?,
-    navController: NavHostController
+    index: Int,
+    selectedScreenInd: Int,
+    onSelection: () -> Unit,
+    bottomNavigationRoute: NavigationRoutes,
+    navController: NavHostController,
 ) {
     NavigationBarItem(
-        selected = currentDestination?.route == screen.route,
-        alwaysShowLabel = currentDestination?.route == screen.route,
+        selected = selectedScreenInd == index,
+        alwaysShowLabel = selectedScreenInd == index,
         label = {
             Text(
-                screen.title,
+                bottomNavigationRoute.title,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
         },
         onClick = {
-            println(screen.route)
-            navController.navigate(screen.route) {
+            navController.navigate(bottomNavigationRoute.route) {
                 popUpTo("main") {
+                    saveState = true
                     inclusive = true
                 }
+                restoreState = true
+                launchSingleTop = true
             }
+            onSelection()
         },
         icon = {
             Icon(
-                imageVector = if (currentDestination?.route == screen.route) screen.selectedIcon else screen.unselectedIcon,
+                imageVector = if (selectedScreenInd == index) bottomNavigationRoute.selectedIcon else bottomNavigationRoute.unselectedIcon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )

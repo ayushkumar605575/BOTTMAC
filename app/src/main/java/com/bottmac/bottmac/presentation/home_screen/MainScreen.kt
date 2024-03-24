@@ -28,13 +28,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.navigation.BottomBar
 import com.bottmac.bottmac.navigation.NavigationRoutes
+import com.bottmac.bottmac.presentation.product_details.ProductDetailsScreen
 import com.bottmac.bottmac.presentation.product_search.HomeScreen
 import com.bottmac.bottmac.presentation.profile.ProfileScreen
 import com.bottmac.bottmac.product_view_model.ProductsViewModel
@@ -83,10 +86,15 @@ fun MainScreenStructure(
 
                 },
                 actions = {
-                    println("Hello $currentRoute")
-                    if (currentRoute == NavigationRoutes.Home.route) {
+                    if (currentRoute != NavigationRoutes.Profile.route) {
                         IconButton(onClick = {
                             isActiveSearch = !isActiveSearch
+                            mainScreenNavController.navigate(NavigationRoutes.Home.route) {
+                                popUpTo(NavigationRoutes.Home.route) {
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                            }
                         }) {
                             Icon(
                                 Icons.Default.Search,
@@ -114,8 +122,25 @@ fun MainScreenStructure(
                     products = products,
                     userData = userData,
                     isSearchActive = isActiveSearch,
-                    navController = mainScreenNavController
+                    mainNavController = mainScreenNavController,
+                    primaryNavHostController = navController
                 )
+            }
+
+            composable(
+                route = "${NavigationRoutes.Home.route}/{productInd}/",
+                arguments = listOf(navArgument("productInd") { NavType.StringType })
+            ) { backstackEntry ->
+                val productInd = backstackEntry.arguments?.getString("productInd")?.toInt() ?: "".toInt()
+                println(productInd)
+                ProductDetailsScreen(
+                    modifier = Modifier.padding(paddingValues),
+                    productName = products[productInd].productName,
+                    productsFeatures = products[productInd].productFeatures.split("\\n"),
+                    productsImages = products[productInd].productImage
+                ) {
+
+                }
             }
 
             composable(route = NavigationRoutes.Profile.route) {
@@ -130,3 +155,4 @@ fun MainScreenStructure(
         }
     }
 }
+

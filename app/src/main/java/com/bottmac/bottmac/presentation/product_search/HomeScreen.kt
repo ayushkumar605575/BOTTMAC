@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.bottmac.bottmac.google_sign_in_service.UserData
 import com.bottmac.bottmac.models.ProductItem
 import com.bottmac.bottmac.presentation.product_details.ProductScreen
@@ -36,7 +37,8 @@ fun HomeScreen(
     products: List<ProductItem>,
     userData: UserData,
     isSearchActive: Boolean,
-    navController: NavController
+    mainNavController: NavController,
+    primaryNavHostController: NavHostController
 ) {
     var query by rememberSaveable {
         mutableStateOf("")
@@ -46,9 +48,6 @@ fun HomeScreen(
     }
     var queryProductItems by rememberSaveable {
         mutableStateOf(products)
-    }
-    var productDetailView by rememberSaveable {
-        mutableStateOf(false)
     }
     LaunchedEffect(key1 = products.size) {
         queryProductItems = products
@@ -67,14 +66,13 @@ fun HomeScreen(
                     isActive = !isActive
                     println(78)
                     queryProductItems = products.filter {
-                        queryText.lowercase() in it.productName.lowercase()//, it.productFeatures.lowercase())
+                        queryText.lowercase() in it.productName.lowercase()
                     }
                     println(queryProductItems)
                 },
                 active = isActive,
                 onActiveChange = {
                     isActive = it
-                    productDetailView = false
                 },
                 trailingIcon = {
                     if (isActive) {
@@ -89,7 +87,6 @@ fun HomeScreen(
                     if (isActive) {
                         IconButton(onClick = {
                             isActive = false
-                            productDetailView = false
                         }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -118,11 +115,8 @@ fun HomeScreen(
             modifier = Modifier,
             products = queryProductItems,
             userData = userData,
-            productDetails = productDetailView,
-            onProductDetails = {
-                productDetailView = !productDetailView
-            },
-            navController = navController
+            mainNavController = mainNavController,
+            primaryNavHostController = primaryNavHostController
         )
     }
 }

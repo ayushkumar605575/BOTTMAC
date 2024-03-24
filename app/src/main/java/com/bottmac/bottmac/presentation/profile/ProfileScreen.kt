@@ -63,8 +63,11 @@ fun ProfileScreen(
             ElevatedButton(onClick = {
                 primaryNavHostController.navigate(NavigationRoutes.SignIn.route) {
                     popUpTo("main") {
+                        saveState = true
                         inclusive = true
                     }
+                    launchSingleTop = true
+                    restoreState = true
                 }
             }) {
                 Text(text = "SIGN IN")

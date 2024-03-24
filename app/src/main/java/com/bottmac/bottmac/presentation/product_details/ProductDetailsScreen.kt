@@ -21,6 +21,10 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -44,6 +48,13 @@ fun ProductDetailsScreen(
 ) {
     BackHandler {
         onBack()
+    }
+    var isDialogBox by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (isDialogBox) {
+        ProductDialogBox { isDialogBox = false }
     }
     Column(
         modifier = modifier
@@ -106,7 +117,7 @@ fun ProductDetailsScreen(
 
         ) {
 
-            ElevatedButton(onClick = { /*TODO*/ }) {
+            ElevatedButton(onClick = { isDialogBox = true }) {
                 Icon(imageVector = Icons.Default.Call, contentDescription = null)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text("Call Now")
