@@ -1,11 +1,16 @@
 package com.bottmac.bottmac.presentation.home_screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -83,7 +88,17 @@ fun MainScreenStructure(
 
                 ),
                 navigationIcon = {
-
+                    if (currentRoute == "${NavigationRoutes.Home.route}/{productInd}/") {
+                        IconButton(onClick = {
+                            mainScreenNavController.popBackStack()
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
                 },
                 actions = {
                     if (currentRoute != NavigationRoutes.Profile.route) {
@@ -107,15 +122,19 @@ fun MainScreenStructure(
         },
         bottomBar = { BottomBar(navController = mainScreenNavController) },
     ) { paddingValues ->
-        val cSignedInUser = hiltViewModel<SignedInUser>()
-        val userData = cSignedInUser.signedInUserData.collectAsState().value
-        val productsViewModel = hiltViewModel<ProductsViewModel>()
-        val products = productsViewModel.productItems.collectAsState().value
+    // TODO: Check a way if possible to make these line of code execute 'n' number of times if internet is unavailable
+//        val productsViewModel = hiltViewModel<ProductsViewModel>()
+//        val products = productsViewModel.productItems.collectAsState().value
+
         NavHost(
             navController = mainScreenNavController,
             startDestination = NavigationRoutes.Home.route,
         ) {
             composable(route = NavigationRoutes.Home.route) {
+                val cSignedInUser = hiltViewModel<SignedInUser>()
+                val userData = cSignedInUser.signedInUserData.collectAsState().value
+                val productsViewModel = hiltViewModel<ProductsViewModel>()
+                val products = productsViewModel.productItems.collectAsState().value
                 currentRoute = mainScreenNavController.currentDestination?.route.toString()
                 HomeScreen(
                     modifier = Modifier.padding(paddingValues),
@@ -131,19 +150,33 @@ fun MainScreenStructure(
                 route = "${NavigationRoutes.Home.route}/{productInd}/",
                 arguments = listOf(navArgument("productInd") { NavType.StringType })
             ) { backstackEntry ->
-                val productInd = backstackEntry.arguments?.getString("productInd")?.toInt() ?: "".toInt()
-                println(productInd)
-                ProductDetailsScreen(
-                    modifier = Modifier.padding(paddingValues),
-                    productName = products[productInd].productName,
-                    productsFeatures = products[productInd].productFeatures.split("\\n"),
-                    productsImages = products[productInd].productImage
-                ) {
-
+                val productsViewModel = hiltViewModel<ProductsViewModel>()
+                val products = productsViewModel.productItems.collectAsState().value
+                val productInd =
+                    backstackEntry.arguments?.getString("productInd")?.toInt() ?: "".toInt()
+                if (products.isNotEmpty()) {
+                    ProductDetailsScreen(
+                        modifier = Modifier.padding(paddingValues),
+                        productName = products[productInd].productName,
+                        productsFeatures = products[productInd].productFeatures.split("\\n"),
+                        productsImages = products[productInd].productImage
+                    ) {
+                        mainScreenNavController.popBackStack()
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) { CircularProgressIndicator() }
                 }
             }
 
             composable(route = NavigationRoutes.Profile.route) {
+                val cSignedInUser = hiltViewModel<SignedInUser>()
+                val userData = cSignedInUser.signedInUserData.collectAsState().value
                 currentRoute = mainScreenNavController.currentDestination?.route.toString()
                 ProfileScreen(
                     modifier = Modifier.padding(paddingValues),

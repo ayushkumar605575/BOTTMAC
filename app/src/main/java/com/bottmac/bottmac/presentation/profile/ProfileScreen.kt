@@ -20,6 +20,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,12 +44,14 @@ fun ProfileScreen(
     cSignedInUser: SignedInUser,
     primaryNavHostController: NavHostController
 ) {
-    val profileOptions = listOf(
-        ProfileOptions.MyOrders,
-        ProfileOptions.ShippingAddress,
-        ProfileOptions.EditProfile,
-    )
-    println(userData)
+    val profileOptions = remember {
+        mutableStateListOf(
+            ProfileOptions.MyOrders,
+            ProfileOptions.ShippingAddress,
+            ProfileOptions.EditProfile,
+        )
+    }
+
     if (userData.userId == null) {
         Column(
             modifier = modifier.fillMaxSize(),
@@ -119,9 +123,12 @@ fun ProfileScreen(
                 }
             }
             Spacer(modifier = Modifier.height(44.dp))
+
             LazyColumn {
                 item { HorizontalDivider() }
-                items(profileOptions) { profileOption ->
+                items(
+                    items = profileOptions
+                ) { profileOption ->
                     ProfileOptionsComposable(
                         heading = profileOption.title,
                         subHeading = profileOption.subTitle,

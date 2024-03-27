@@ -62,13 +62,16 @@ fun ProductDetailsScreen(
             .padding(8.dp),
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        ElevatedCard {
+        ElevatedCard(
+            modifier = Modifier
+                .height(348.dp)
+                .fillMaxWidth(),
+        ) {
+
             LazyRow {
                 items(productsImages) { productsImage ->
                     AsyncImage(
-                        modifier = Modifier
-                            .height(348.dp)
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxSize(),
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(
                                 Base64.decode(
@@ -81,9 +84,10 @@ fun ProductDetailsScreen(
                         contentScale = ContentScale.Crop,
                         contentDescription = null
                     )
-
                 }
+
             }
+
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(

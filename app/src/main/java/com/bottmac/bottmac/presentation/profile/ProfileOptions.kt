@@ -1,5 +1,9 @@
 package com.bottmac.bottmac.presentation.profile
 
+import androidx.compose.runtime.Immutable
+
+
+@Immutable
 sealed class ProfileOptions(
     val routes: String,
     val title: String,

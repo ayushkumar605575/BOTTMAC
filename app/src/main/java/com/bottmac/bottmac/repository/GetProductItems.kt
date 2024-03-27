@@ -13,8 +13,20 @@ class GetProductItems @Inject constructor(private val productsApi: ProductsApi) 
         get() = _products
 
     private val auth = FireBaseService()
+
     suspend fun getProducts() {
-        val response = productsApi.getProducts(authorization = auth.getTokenId())
+        try {
+            val response = productsApi.getProducts(authorization = auth.getTokenId())
+            println(response.isSuccessful)
+            if (response.isSuccessful) {
+                _products.emit(response.body() ?: emptyList())
+            } else {
+                _products.emit(emptyList())
+            }
+        } catch (e: Exception) {
+                _products.emit(listOf(ProductItem("", -1, listOf(""), "")))
+            println("Error fetching data")
+        }
 //        println(response.)
 //            .enqueue(
 //            object:Callback<List<ProductItem>>{
@@ -33,11 +45,6 @@ class GetProductItems @Inject constructor(private val productsApi: ProductsApi) 
 //
 //            }
 //        )
-        println(response.isSuccessful)
-        if (response.isSuccessful) {
-            _products.emit(response.body() ?: emptyList())
-        } else {
-            _products.emit(emptyList())
-        }
+
     }
 }
