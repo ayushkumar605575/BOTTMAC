@@ -7,14 +7,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
 import com.bottmac.bottmac.navigation.NavGraph
 import com.bottmac.bottmac.navigation.NavigationRoutes
+import com.bottmac.bottmac.product_view_model.ProductsViewModel
 import com.bottmac.bottmac.ui.theme.BOTTMACTheme
 import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -37,6 +41,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+//                    val viewModel = hiltViewModel<ProductsViewModel>()
                     val navController = rememberNavController()
                     LaunchedEffect(key1 = Unit) {
                         if (googleAuthUiClient.getSignedInUser().userId != null) {

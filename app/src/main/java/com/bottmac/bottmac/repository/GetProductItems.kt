@@ -2,6 +2,7 @@ package com.bottmac.bottmac.repository
 
 import com.bottmac.bottmac.api.ProductsApi
 import com.bottmac.bottmac.firebase_service.FireBaseService
+import com.bottmac.bottmac.models.NewUser
 import com.bottmac.bottmac.models.ProductItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +14,14 @@ class GetProductItems @Inject constructor(private val productsApi: ProductsApi) 
         get() = _products
 
     private val auth = FireBaseService()
+
+    suspend fun createUser(newUser: NewUser) {
+        try{
+            productsApi.createUser(authorization = auth.getTokenId(), newUser = newUser)
+        } catch (e: Exception){
+            e.printStackTrace()
+        }
+    }
 
     suspend fun getProducts() {
         try {
