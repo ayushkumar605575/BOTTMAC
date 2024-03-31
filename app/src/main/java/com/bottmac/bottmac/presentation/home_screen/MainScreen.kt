@@ -1,5 +1,9 @@
 package com.bottmac.bottmac.presentation.home_screen
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,6 +51,7 @@ import com.bottmac.bottmac.presentation.product_search.HomeScreen
 import com.bottmac.bottmac.presentation.profile.ProfileScreen
 import com.bottmac.bottmac.product_view_model.ProductsViewModel
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreenStructure(
@@ -88,7 +93,9 @@ fun MainScreenStructure(
 
                 ),
                 navigationIcon = {
-                    if (currentRoute == "${NavigationRoutes.Home.route}/{productInd}/") {
+                    AnimatedVisibility(
+                        visible = currentRoute == "${NavigationRoutes.Home.route}/{productInd}/"
+                    ) {
                         IconButton(onClick = {
                             mainScreenNavController.popBackStack()
                         }) {
@@ -101,7 +108,9 @@ fun MainScreenStructure(
                     }
                 },
                 actions = {
-                    if (currentRoute != NavigationRoutes.Profile.route) {
+                    AnimatedVisibility(
+                        visible = currentRoute != NavigationRoutes.Profile.route
+                    ) {
                         IconButton(onClick = {
                             isActiveSearch = !isActiveSearch
                             mainScreenNavController.navigate(NavigationRoutes.Home.route) {
@@ -122,7 +131,7 @@ fun MainScreenStructure(
         },
         bottomBar = { BottomBar(navController = mainScreenNavController) },
     ) { paddingValues ->
-    // TODO: Check a way if possible to make these line of code execute 'n' number of times if internet is unavailable
+        // TODO: Check a way if possible to make these line of code execute 'n' number of times if internet is unavailable
 //        val productsViewModel = hiltViewModel<ProductsViewModel>()
 //        val products = productsViewModel.productItems.collectAsState().value
 
@@ -130,9 +139,24 @@ fun MainScreenStructure(
             navController = mainScreenNavController,
             startDestination = NavigationRoutes.Home.route,
         ) {
-            composable(route = NavigationRoutes.Home.route) {
+            composable(
+                route = NavigationRoutes.Home.route,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                }
+            ) {
                 val cSignedInUser = hiltViewModel<SignedInUser>()
                 val userData = cSignedInUser.signedInUserData.collectAsState().value
+
                 val productsViewModel = hiltViewModel<ProductsViewModel>()
                 val products = productsViewModel.productItems.collectAsState().value
                 currentRoute = mainScreenNavController.currentDestination?.route.toString()
@@ -148,7 +172,19 @@ fun MainScreenStructure(
 
             composable(
                 route = "${NavigationRoutes.Home.route}/{productInd}/",
-                arguments = listOf(navArgument("productInd") { NavType.StringType })
+                arguments = listOf(navArgument("productInd") { NavType.StringType }),
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                }
             ) { backstackEntry ->
                 val productsViewModel = hiltViewModel<ProductsViewModel>()
                 val products = productsViewModel.productItems.collectAsState().value
@@ -174,7 +210,21 @@ fun MainScreenStructure(
                 }
             }
 
-            composable(route = NavigationRoutes.Profile.route) {
+            composable(
+                route = NavigationRoutes.Profile.route,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                }
+            ) {
                 val cSignedInUser = hiltViewModel<SignedInUser>()
                 val userData = cSignedInUser.signedInUserData.collectAsState().value
                 currentRoute = mainScreenNavController.currentDestination?.route.toString()

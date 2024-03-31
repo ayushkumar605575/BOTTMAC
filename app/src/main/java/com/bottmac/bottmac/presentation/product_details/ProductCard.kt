@@ -1,6 +1,7 @@
 package com.bottmac.bottmac.presentation.product_details
 
 import android.util.Base64
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,13 +43,14 @@ fun ProductCard(
     productName: String,
     productsFeatures: List<String>,
     productsImages: List<String>,
+    guestUser: Boolean,
     onClick: () -> Unit
 ) {
     var isDialogBox by rememberSaveable {
         mutableStateOf(false)
     }
 
-    if (isDialogBox) {
+    AnimatedVisibility(visible = isDialogBox) {
         ProductDialogBox { isDialogBox = false }
     }
 
@@ -119,13 +121,23 @@ fun ProductCard(
                 ) {
                     Button(
                         onClick = {
-                            isDialogBox = true
+                            if (guestUser) {
+                                onClick()
+                            } else {
+                                isDialogBox = true
+                            }
                         },
                     ) {
                         Icon(imageVector = Icons.Default.Call, contentDescription = null)
                         Text(text = "Call Now")
                     }
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = {
+                        if (guestUser) {
+                            onClick()
+                        } else {
+                            isDialogBox = true
+                        }
+                    }) {
                         Text(text = "Order Now")
 
                     }

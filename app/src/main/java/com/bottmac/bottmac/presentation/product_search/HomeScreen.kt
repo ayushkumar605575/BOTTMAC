@@ -1,5 +1,7 @@
 package com.bottmac.bottmac.presentation.product_search
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,61 +57,71 @@ fun HomeScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        if (isSearchActive) {
-            SearchBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                query = query,
-                onQueryChange = { query = it },
-                onSearch = { queryText ->
-                    isActive = !isActive
-                    println(78)
-                    queryProductItems = products.filter {
-                        queryText.lowercase() in it.productName.lowercase()
-                    }
-                    println(queryProductItems)
-                },
-                active = isActive,
-                onActiveChange = {
-                    isActive = it
-                },
-                trailingIcon = {
-                    if (isActive) {
-                        IconButton(onClick = {
-                            query = ""
-                        }) {
-                            Icon(imageVector = Icons.Default.Clear, contentDescription = null)
+        AnimatedContent(targetState = isSearchActive, label = "") { active ->
+            if (active) {
+                SearchBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    query = query,
+                    onQueryChange = { query = it },
+                    onSearch = { queryText ->
+                        isActive = !isActive
+//                        println(78)
+                        queryProductItems = products.filter {
+                            queryText.lowercase() in it.productName.lowercase()
                         }
-                    }
-                },
-                leadingIcon = {
-                    if (isActive) {
-                        IconButton(onClick = {
-                            isActive = false
-                        }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = null
-                            )
+                        println(queryProductItems)
+                    },
+                    active = isActive,
+                    onActiveChange = {
+                        isActive = it
+                    },
+                    trailingIcon = {
+                        AnimatedVisibility(isActive) {
+                            IconButton(onClick = {
+                                query = ""
+                            }) {
+                                Icon(imageVector = Icons.Default.Clear, contentDescription = null)
+                            }
                         }
-                    } else {
-                        IconButton(onClick = {
-                        }) {
-                            Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                    },
+                    leadingIcon = {
+                        AnimatedContent(
+                            targetState = isActive,
+                            label = "LeadingIconAnimation"
+                        ) { active ->
+                            if (active) {
+                                IconButton(onClick = {
+                                    isActive = false
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = null
+                                    )
+                                }
+                            } else {
+                                IconButton(onClick = {
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
                         }
-                    }
-                },
-                shadowElevation = 42.dp,
-                placeholder = { Text(text = "Search Products") }
-            ) {
-                Text(text = "My Searches")
+                    },
+                    shadowElevation = 42.dp,
+                    placeholder = { Text(text = "Search Products") }
+                ) {
+                    Text(text = "My Searches")
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                HorizontalDivider()
+            } else {
+                query = ""
+                queryProductItems = products
             }
-            Spacer(modifier = Modifier.height(4.dp))
-            HorizontalDivider()
-        } else {
-            query = ""
-            queryProductItems = products
         }
         ProductScreen(
             modifier = Modifier,

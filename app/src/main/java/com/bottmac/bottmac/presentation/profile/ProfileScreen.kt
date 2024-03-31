@@ -143,7 +143,9 @@ fun ProfileScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ) {
-            ElevatedButton(onClick = {
+            ElevatedButton(
+                modifier = Modifier.padding(bottom = 8.dp),
+                onClick = {
                 cSignedInUser.signOutCurrentUser()
                 primaryNavHostController.navigate(NavigationRoutes.SignIn.route) {
                     popUpTo("main") {
