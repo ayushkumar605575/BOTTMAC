@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignedInUser @Inject constructor(application: Application) : AndroidViewModel(application) {
 
-    private val _signedInUserData = MutableStateFlow(UserData(null, null, null, null, null))
+    private val _signedInUserData = MutableStateFlow(UserData(null, "", null, null, null))
 
     val signedInUserData: StateFlow<UserData>
         get() = _signedInUserData.asStateFlow()

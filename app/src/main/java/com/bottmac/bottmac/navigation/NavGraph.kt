@@ -5,6 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +23,7 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +42,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
 import com.bottmac.bottmac.google_sign_in_service.SignInViewModel
 import com.bottmac.bottmac.presentation.home_screen.MainScreenStructure
@@ -64,7 +69,21 @@ fun NavGraph(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) { CircularProgressIndicator() }
             }
-            composable(route = NavigationRoutes.SignIn.route) {
+            composable(
+                route = NavigationRoutes.SignIn.route,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                }
+            ) {
                 val context = LocalContext.current
                 val viewModel = it.sharedViewModel<SignInViewModel>(navController)
                 val scope = rememberCoroutineScope()
@@ -111,7 +130,21 @@ fun NavGraph(
                     navController = navController
                 )
             }
-            composable(route = NavigationRoutes.SignUp.route) {
+            composable(
+                route = NavigationRoutes.SignUp.route,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                }
+            ) {
                 val scope = rememberCoroutineScope()
                 val viewModel = it.sharedViewModel<SignInViewModel>(navController)
                 val state by viewModel.state.collectAsStateWithLifecycle()
@@ -144,7 +177,26 @@ fun NavGraph(
             }
         }
         navigation(startDestination = "mainScreen", route = "main") {
-            composable("mainScreen") {
+            composable(route = "mainScreen",
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                },
+                popExitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                }
+                ) {
                 MainScreenStructure(
                     navController = navController,
                 )
@@ -152,7 +204,26 @@ fun NavGraph(
         }
         navigation(startDestination = ProfileOptions.MyOrders.routes, route = "profileOptions") {
             var profileOptionScreen: @Composable (PaddingValues) -> Unit
-            composable(ProfileOptions.MyOrders.routes) {
+            composable(route = ProfileOptions.MyOrders.routes,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                },
+                popExitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                }
+            ) {
                 profileOptionScreen = {
                     OrderScreen(modifier = Modifier.padding(it))
                 }
@@ -162,7 +233,26 @@ fun NavGraph(
                     screen = profileOptionScreen
                 )
             }
-            composable(ProfileOptions.ShippingAddress.routes) {
+            composable(route = ProfileOptions.ShippingAddress.routes,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                },
+                popExitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                }
+            ) {
                 profileOptionScreen = {
                     ShippingAddressScreen(modifier = Modifier.padding(it))
                 }
@@ -172,9 +262,31 @@ fun NavGraph(
                     screen = profileOptionScreen
                 )
             }
-            composable(ProfileOptions.EditProfile.routes) {
-                profileOptionScreen = {
-                    EditProfileScreen(modifier = Modifier.padding(it))
+            composable(route = ProfileOptions.EditProfile.routes,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                },
+                popExitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+                    )
+                }
+            ) {backStackEntry ->
+                val cSignedInUser = backStackEntry.sharedViewModel<SignedInUser>(navController = navController)
+                val userData = cSignedInUser.signedInUserData.collectAsState()
+
+                profileOptionScreen = {paddingValues ->
+                    EditProfileScreen(modifier = Modifier.padding(paddingValues), userData = userData.value)
                 }
                 ProfileOptionNavigationStructure(
                     navController = navController,

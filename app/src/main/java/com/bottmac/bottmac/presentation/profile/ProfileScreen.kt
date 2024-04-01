@@ -1,5 +1,6 @@
 package com.bottmac.bottmac.presentation.profile
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,109 +52,114 @@ fun ProfileScreen(
             ProfileOptions.EditProfile,
         )
     }
-
-    if (userData.userId == null) {
-        Column(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Sign In with your account",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            ElevatedButton(onClick = {
-                primaryNavHostController.navigate(NavigationRoutes.SignIn.route) {
-                    popUpTo("main") {
-                        saveState = true
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }) {
-                Text(text = "SIGN IN")
-            }
-        }
-    } else {
-        Column(
-            modifier = modifier
-        )
-        {
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
+//    println(userData)
+    AnimatedContent(
+        targetState = userData.userName == null,
+        label = ""
+    ) { isUser ->
+        if (isUser) {
+            Column(
+                modifier = modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AsyncImage(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(100.dp),
-                    model = userData.profilePicUrl?.ifEmpty { R.drawable.profile_placeholder },
-                    placeholder = painterResource(id = R.drawable.profile_placeholder),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = "Profile Picture"
+                Text(
+                    text = "Sign In with your account",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
                 )
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Spacer(modifier = Modifier.height(12.dp))
+                ElevatedButton(onClick = {
+                    primaryNavHostController.navigate(NavigationRoutes.SignIn.route) {
+                        popUpTo("main") {
+                            saveState = true
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }) {
+                    Text(text = "SIGN IN")
+                }
+            }
+        } else {
+            Column(
+                modifier = modifier
+            )
+            {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp)
+                        .padding(vertical = 8.dp, horizontal = 16.dp)
                 ) {
-                    if (userData.userName != null) {
-                        Text(
-                            text = userData.userName,
-                            fontSize = 32.sp,
-                        )
-                    }
-                    if (userData.phoneNumber != null) {
-                        Text(
-                            text = userData.phoneNumber
-                        )
-                    }
-                    if (userData.email != null) {
-                        Text(
-                            text = userData.email
-
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(44.dp))
-
-            LazyColumn {
-                item { HorizontalDivider() }
-                items(
-                    items = profileOptions
-                ) { profileOption ->
-                    ProfileOptionsComposable(
-                        heading = profileOption.title,
-                        subHeading = profileOption.subTitle,
-                        route = profileOption.routes,
-                        primaryNavHostController = primaryNavHostController
+                    AsyncImage(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .size(100.dp),
+                        model = userData.profilePicUrl?.ifEmpty { R.drawable.profile_placeholder },
+                        placeholder = painterResource(id = R.drawable.profile_placeholder),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = "Profile Picture"
                     )
-                }
-            }
-        }
-        Column(
-            modifier = modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            ElevatedButton(
-                modifier = Modifier.padding(bottom = 8.dp),
-                onClick = {
-                cSignedInUser.signOutCurrentUser()
-                primaryNavHostController.navigate(NavigationRoutes.SignIn.route) {
-                    popUpTo("main") {
-                        inclusive = true
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        if (userData.userName != null) {
+                            Text(
+                                text = userData.userName,
+                                fontSize = 32.sp,
+                            )
+                        }
+                        if (userData.phoneNumber != null) {
+                            Text(
+                                text = userData.phoneNumber
+                            )
+                        }
+                        if (userData.email != null) {
+                            Text(
+                                text = userData.email
+
+                            )
+                        }
                     }
                 }
-            }) {
-                Text(text = "Sign Out")
+                Spacer(modifier = Modifier.height(44.dp))
+
+                LazyColumn {
+                    item { HorizontalDivider() }
+                    items(
+                        items = profileOptions
+                    ) { profileOption ->
+                        ProfileOptionsComposable(
+                            heading = profileOption.title,
+                            subHeading = profileOption.subTitle,
+                            route = profileOption.routes,
+                            primaryNavHostController = primaryNavHostController
+                        )
+                    }
+                }
+            }
+            Column(
+                modifier = modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                ElevatedButton(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    onClick = {
+                        cSignedInUser.signOutCurrentUser()
+                        primaryNavHostController.navigate(route = NavigationRoutes.SignIn.route) {
+                            popUpTo("main") {
+                                inclusive = true
+                            }
+                        }
+                    }) {
+                    Text(text = "Sign Out")
+                }
             }
         }
     }

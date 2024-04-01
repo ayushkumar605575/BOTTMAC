@@ -11,6 +11,6 @@ fun OrderScreen(modifier: Modifier) {
     Column(
         modifier = modifier
     ) {
-        Text(text = "Order 1")
+
     }
 }

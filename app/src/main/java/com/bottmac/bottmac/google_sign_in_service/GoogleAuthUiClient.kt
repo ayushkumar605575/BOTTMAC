@@ -20,8 +20,6 @@ class GoogleAuthUiClient(
 ) {
     private val auth = Firebase.auth
     private val db = FirebaseFirestore.getInstance()
-//    private var storageRef = FirebaseStorage.getInstance()
-
 
     suspend fun signIn(): IntentSender? {
         val result = try {
@@ -77,22 +75,21 @@ class GoogleAuthUiClient(
     suspend fun getSignedInUser(): UserData {
         val user = auth.currentUser
         if (user != null) {
-            println(user)
+        val userData = try {
+            db.document("users/${user.uid}").get().await().data
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
             if (user.displayName?.isNotBlank() == true) {
                 return UserData(
-                    userId = auth.currentUser!!.uid,
+                    userId = user.uid,
                     userName = user.displayName,
                     profilePicUrl = user.photoUrl.toString(),
                     phoneNumber = user.phoneNumber,
                     email = user.email
                 )
             } else {
-                val userData = try {
-                    db.document("users/${auth.currentUser!!.uid}").get().await().data
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    null
-                }
                 if (userData != null) {
                     return UserData(
                         userId = auth.currentUser!!.uid,
