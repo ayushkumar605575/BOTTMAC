@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -46,6 +47,9 @@ fun ProductDetailsScreen(
     productsImages: List<String>,
     onBack: () -> Unit,
 ) {
+    var isProductOrdered by rememberSaveable {
+        mutableStateOf(false)
+    }
     BackHandler {
         onBack()
     }
@@ -121,14 +125,23 @@ fun ProductDetailsScreen(
 
         ) {
 
-            ElevatedButton(onClick = { isDialogBox = true }) {
-                Icon(imageVector = Icons.Default.Call, contentDescription = null)
-                Spacer(modifier = Modifier.width(4.dp))
-                Text("Call Now")
-            }
-            ElevatedButton(onClick = { /*TODO*/ }) {
-                Text("Order Now")
+            if (!isProductOrdered) {
+                ElevatedButton(onClick = { isDialogBox = true }) {
+                    Icon(imageVector = Icons.Default.Call, contentDescription = null)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Call Now")
+                }
+                ElevatedButton(onClick = { isProductOrdered = true }) {
+                    Text("Order Now")
+                }
+            } else {
+                ElevatedButton(onClick = { isDialogBox = true }, enabled = false) {
+                    Icon(imageVector = Icons.Default.Check, contentDescription = null)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Order Placed")
+                }
             }
         }
+        println("$productName Viewed")
     }
 }

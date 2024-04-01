@@ -84,6 +84,7 @@ fun ProductScreen(
                                     }
                                 } else {
                                     mainNavController.navigate("${NavigationRoutes.Home.route}/${productInd}/")
+
                                 }
                             }
                         }
