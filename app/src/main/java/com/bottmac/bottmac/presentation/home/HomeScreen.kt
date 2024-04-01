@@ -42,6 +42,7 @@ fun HomeScreen(
     mainNavController: NavController,
     primaryNavHostController: NavHostController
 ) {
+
     var query by rememberSaveable {
         mutableStateOf("")
     }

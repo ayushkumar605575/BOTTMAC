@@ -27,12 +27,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.Scale
+import coil.size.Size
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.google_sign_in_service.UserData
@@ -52,7 +55,7 @@ fun ProfileScreen(
             ProfileOptions.EditProfile,
         )
     }
-//    println(userData)
+    println(userData)
     AnimatedContent(
         targetState = userData.userName == null,
         label = ""
@@ -98,8 +101,13 @@ fun ProfileScreen(
                         modifier = Modifier
                             .clip(CircleShape)
                             .size(100.dp),
-                        model = userData.profilePicUrl?.ifEmpty { R.drawable.profile_placeholder },
-                        placeholder = painterResource(id = R.drawable.profile_placeholder),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(userData.profilePicUrl)
+                            .scale(Scale.FILL)
+                            .size(Size.ORIGINAL)
+                            .placeholder(R.drawable.profile_placeholder)
+                            .crossfade(true)
+                            .build(),
                         contentScale = ContentScale.Crop,
                         contentDescription = "Profile Picture"
                     )

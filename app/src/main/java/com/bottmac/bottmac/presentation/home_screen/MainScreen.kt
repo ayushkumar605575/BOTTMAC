@@ -154,16 +154,17 @@ fun MainScreenStructure(
                     )
                 }
             ) {
-                val cSignedInUser = hiltViewModel<SignedInUser>()
-                val userData = cSignedInUser.signedInUserData.collectAsState().value
 
+
+                val cSignedInUser = hiltViewModel<SignedInUser>()
+                val userData = cSignedInUser.signedInUserData.collectAsState()
                 val productsViewModel = hiltViewModel<ProductsViewModel>()
-                val products = productsViewModel.productItems.collectAsState().value
+                val products = productsViewModel.productItems.collectAsState()
                 currentRoute = mainScreenNavController.currentDestination?.route.toString()
                 HomeScreen(
                     modifier = Modifier.padding(paddingValues),
-                    products = products,
-                    userData = userData,
+                    products = products.value,
+                    userData = userData.value,
                     isSearchActive = isActiveSearch,
                     mainNavController = mainScreenNavController,
                     primaryNavHostController = navController
@@ -226,11 +227,11 @@ fun MainScreenStructure(
                 }
             ) {
                 val cSignedInUser = hiltViewModel<SignedInUser>()
-                val userData = cSignedInUser.signedInUserData.collectAsState().value
+                val userData = cSignedInUser.signedInUserData.collectAsState()
                 currentRoute = mainScreenNavController.currentDestination?.route.toString()
                 ProfileScreen(
                     modifier = Modifier.padding(paddingValues),
-                    userData = userData,
+                    userData = userData.value,
                     cSignedInUser = cSignedInUser,
                     primaryNavHostController = navController
                 )
