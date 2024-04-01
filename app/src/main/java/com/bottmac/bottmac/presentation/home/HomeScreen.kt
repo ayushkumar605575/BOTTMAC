@@ -1,4 +1,4 @@
-package com.bottmac.bottmac.presentation.product_search
+package com.bottmac.bottmac.presentation.home
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility

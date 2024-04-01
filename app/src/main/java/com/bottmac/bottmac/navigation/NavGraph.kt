@@ -225,7 +225,7 @@ fun NavGraph(
                 }
             ) {
                 profileOptionScreen = {
-                    OrderScreen(modifier = Modifier.padding(it))
+                    OrderScreen(modifier = Modifier.fillMaxSize().padding(it))
                 }
                 ProfileOptionNavigationStructure(
                     navController = navController,

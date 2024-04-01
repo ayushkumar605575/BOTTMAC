@@ -70,9 +70,7 @@ fun ProductScreen(
                     ) {
                         items(products.size) { productInd ->
                             ProductCard(
-                                productName = products[productInd].productName,
-                                productsFeatures = products[productInd].productFeatures.split("\\n"),
-                                productsImages = products[productInd].productImage,
+                                product = products[productInd],
                                 guestUser = guestUser,
                             ) {
                                 if (guestUser) {

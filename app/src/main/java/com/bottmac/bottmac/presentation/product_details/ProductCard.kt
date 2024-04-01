@@ -36,16 +36,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.bottmac.bottmac.models.ProductItem
 
+internal val placedItems = mutableListOf<ProductItem>()
 
 @Composable
 fun ProductCard(
-    productName: String,
-    productsFeatures: List<String>,
-    productsImages: List<String>,
+    product: ProductItem,
     guestUser: Boolean,
     onClick: () -> Unit
 ) {
+    val productsFeatures = product.productFeatures.split("\\n")
+    var isOrderPlaced by rememberSaveable {
+        mutableStateOf("Order Now")
+    }
     var isDialogBox by rememberSaveable {
         mutableStateOf(false)
     }
@@ -73,7 +77,7 @@ fun ProductCard(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(
                         Base64.decode(
-                            productsImages[0],
+                            product.productImage[0],
                             Base64.DEFAULT
                         )
                     )
@@ -90,7 +94,7 @@ fun ProductCard(
                 verticalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
-                    text = productName,
+                    text = product.productName,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -119,26 +123,30 @@ fun ProductCard(
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    Button(
-                        onClick = {
-                            if (guestUser) {
-                                onClick()
-                            } else {
-                                isDialogBox = true
+                    if (isOrderPlaced != "✔️ Order Placed") {
+                        Button(
+                            onClick = {
+                                if (guestUser) {
+                                    onClick()
+                                } else {
+                                    isDialogBox = true
+                                }
                             }
-                        },
-                    ) {
-                        Icon(imageVector = Icons.Default.Call, contentDescription = null)
-                        Text(text = "Call Now")
+                        ) {
+                            Icon(imageVector = Icons.Default.Call, contentDescription = null)
+                            Text(text = "Call Now")
+                        }
                     }
                     Button(onClick = {
                         if (guestUser) {
                             onClick()
                         } else {
-                            isDialogBox = true
+                            isOrderPlaced = "✔️ Order Placed"
+                            placedItems.add(product)
+//                            isDialogBox = true
                         }
                     }) {
-                        Text(text = "Order Now")
+                        Text(text = isOrderPlaced)
 
                     }
                 }

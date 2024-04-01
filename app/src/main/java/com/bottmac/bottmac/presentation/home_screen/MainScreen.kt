@@ -47,7 +47,7 @@ import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.navigation.BottomBar
 import com.bottmac.bottmac.navigation.NavigationRoutes
 import com.bottmac.bottmac.presentation.product_details.ProductDetailsScreen
-import com.bottmac.bottmac.presentation.product_search.HomeScreen
+import com.bottmac.bottmac.presentation.home.HomeScreen
 import com.bottmac.bottmac.presentation.profile.ProfileScreen
 import com.bottmac.bottmac.product_view_model.ProductsViewModel
 
