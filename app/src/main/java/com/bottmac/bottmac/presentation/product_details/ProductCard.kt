@@ -38,7 +38,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bottmac.bottmac.models.ProductItem
 
-internal val placedItems = mutableListOf<ProductItem>()
+//internal val placedItems = mutableListOf<ProductItem>()
 
 @Composable
 fun ProductCard(
@@ -142,7 +142,7 @@ fun ProductCard(
                             onClick()
                         } else {
                             isOrderPlaced = "✔️ Order Placed"
-                            placedItems.add(product)
+//                            placedItems.add(product)
 //                            isDialogBox = true
                         }
                     }) {

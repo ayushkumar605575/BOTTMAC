@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bottmac.bottmac.email_sign_in_service.EmailSignInSignUpClient
+import com.bottmac.bottmac.navigation.NavigationRoutes
 
 @Composable
 fun SignInSignUpButton(
@@ -77,7 +78,7 @@ fun SignInSignUpButton(
                     )
                 ) {
                     emailSignInSignUpClient.signOut()
-                    navController.navigate("startUp") {
+                    navController.navigate(NavigationRoutes.SignIn.route) {
                         popUpTo("mainScreen") {
                             inclusive = true
                         }
