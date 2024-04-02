@@ -47,9 +47,7 @@ fun ProductCard(
     onClick: () -> Unit
 ) {
     val productsFeatures = product.productFeatures.split("\\n")
-    var isOrderPlaced by rememberSaveable {
-        mutableStateOf("Order Now")
-    }
+
     var isDialogBox by rememberSaveable {
         mutableStateOf(false)
     }
@@ -115,40 +113,20 @@ fun ProductCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-
-                Row(
+                Button(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(end = 8.dp, bottom = 8.dp),
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    if (isOrderPlaced != "✔️ Order Placed") {
-                        Button(
-                            onClick = {
-                                if (guestUser) {
-                                    onClick()
-                                } else {
-                                    isDialogBox = true
-                                }
-                            }
-                        ) {
-                            Icon(imageVector = Icons.Default.Call, contentDescription = null)
-                            Text(text = "Call Now")
-                        }
-                    }
-                    Button(onClick = {
+                    onClick = {
                         if (guestUser) {
                             onClick()
                         } else {
-                            isOrderPlaced = "✔️ Order Placed"
-//                            placedItems.add(product)
-//                            isDialogBox = true
+                            isDialogBox = true
                         }
-                    }) {
-                        Text(text = isOrderPlaced)
-
                     }
+                ) {
+                    Icon(imageVector = Icons.Default.Call, contentDescription = null)
+                    Text(text = "Call Now")
                 }
             }
         }

@@ -4,7 +4,6 @@ import android.util.Base64
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -26,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -47,9 +44,6 @@ fun ProductDetailsScreen(
     productsImages: List<String>,
     onBack: () -> Unit,
 ) {
-    var isProductOrdered by rememberSaveable {
-        mutableStateOf(false)
-    }
     BackHandler {
         onBack()
     }
@@ -118,30 +112,15 @@ fun ProductDetailsScreen(
                 )
             }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.SpaceEvenly
-
+        ElevatedButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 8.dp, bottom = 8.dp),
+            onClick = { isDialogBox = true },
         ) {
-
-            if (!isProductOrdered) {
-                ElevatedButton(onClick = { isDialogBox = true }) {
-                    Icon(imageVector = Icons.Default.Call, contentDescription = null)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Call Now")
-                }
-                ElevatedButton(onClick = { isProductOrdered = true }) {
-                    Text("Order Now")
-                }
-            } else {
-                ElevatedButton(onClick = { isDialogBox = true }, enabled = false) {
-                    Icon(imageVector = Icons.Default.Check, contentDescription = null)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Order Placed")
-                }
-            }
+            Icon(imageVector = Icons.Default.Call, contentDescription = null)
+            Spacer(modifier = Modifier.width(4.dp))
+            Text("Call Now")
         }
-        println("$productName Viewed")
     }
 }
