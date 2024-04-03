@@ -36,9 +36,7 @@ class SignedInUser @Inject constructor(application: Application) : AndroidViewMo
     }
 
     init {
-        viewModelScope.launch {
-            _signedInUserData.emit(googleAuthUiClient.getSignedInUser())
-        }
+        getUserUpdatedData()
     }
 
     fun signOutCurrentUser() {

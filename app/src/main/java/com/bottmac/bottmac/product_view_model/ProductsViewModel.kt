@@ -24,9 +24,10 @@ class ProductsViewModel @Inject constructor(private val getProductItems: GetProd
     }
 
     init {
-        viewModelScope.launch {
+        getLatestProduct()
+//        viewModelScope.launch {
 //            getProductItems.createUser(NewUser("gfy785r657","A",LocalDateTime.now(),LocalDateTime.now()))
-            getProductItems.getProducts()
-        }
+//            getProductItems.getProducts()
+//        }
     }
 }

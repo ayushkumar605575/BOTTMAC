@@ -58,6 +58,7 @@ fun MainScreenStructure(
     navController: NavHostController,
     cSignedInUser: SignedInUser
 ) {
+    cSignedInUser.getUserUpdatedData()
     val productsViewModel = hiltViewModel<ProductsViewModel>()
     val userData by cSignedInUser.signedInUserData.collectAsStateWithLifecycle()
     val products by productsViewModel.productItems.collectAsStateWithLifecycle()

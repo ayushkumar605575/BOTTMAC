@@ -57,7 +57,7 @@ fun EditProfileScreen(
     ) {
         Box(
             modifier = Modifier
-                .size(200.dp)
+                .size(100.dp)
                 .clip(CircleShape)
                 .clickable {
                     galleryLauncher.launch("image/*")
@@ -71,6 +71,7 @@ fun EditProfileScreen(
                     .size(Size.ORIGINAL)
                     .crossfade(true)
                     .build(),
+                alpha = if (isImageUploading) 0.5f else 1f,
                 contentScale = ContentScale.Crop,
                 contentDescription = null
             )

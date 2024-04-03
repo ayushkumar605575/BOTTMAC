@@ -74,34 +74,38 @@ class GoogleAuthUiClient(
 
     suspend fun getSignedInUser(): UserData {
         val user = auth.currentUser
+        println("User $user")
         if (user != null) {
-        val userData = try {
-            db.document("users/${user.uid}").get().await().data
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-            if (user.displayName?.isNotBlank() == true) {
+            val userData = try {
+                db.document("users/${user.uid}").get().await().data
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+            println("Signed In $userData")
+//            if (user.displayName?.isNotBlank() == true) {
                 return UserData(
                     userId = user.uid,
-                    userName = user.displayName,
-                    profilePicUrl = user.photoUrl.toString(),
-                    phoneNumber = user.phoneNumber,
-                    email = user.email
+                    userName = userData?.get("name").toString().ifEmpty { user.displayName },
+                    profilePicUrl = userData?.get("profileImageUrl").toString()
+                            .ifEmpty { user.photoUrl.toString() }
+                    ,
+                    phoneNumber = userData?.get("phoneNumber").toString().ifEmpty { user.phoneNumber },
+                    email = userData?.get("email").toString().ifEmpty { user.email }
                 )
-            } else {
-                if (userData != null) {
-                    return UserData(
-                        userId = auth.currentUser!!.uid,
-                        userName = userData["name"].toString(),
-                        profilePicUrl = userData["profileImageUrl"].toString(),
-                        phoneNumber = userData["phoneNumber"].toString(),
-                        email = userData["email"].toString()
-                    )
-                }
-            }
+//            } else {
+//                if (userData != null) {
+//                    return UserData(
+//                        userId = auth.currentUser!!.uid,
+//                        userName = userData["name"].toString(),
+//                        profilePicUrl = userData["profileImageUrl"].toString(),
+//                        phoneNumber = userData["phoneNumber"].toString(),
+//                        email = userData["email"].toString()
+//                    )
+//                }
+//            }
         }
-        return UserData(null,null,null,null,null)
+        return UserData(null, null, null, null, null)
     }
 
     private fun buildSignInRequest(): BeginSignInRequest {
