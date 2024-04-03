@@ -42,6 +42,14 @@ class GoogleAuthUiClient(
             val user = auth.signInWithCredential(googleCredentials).await().user
             SignInResult(
                 data = user?.run {
+                    db.document("users/${uid}").set(
+                        hashMapOf(
+                            "name" to displayName,
+                            "phoneNumber" to if (phoneNumber == null) "" else phoneNumber,
+                            "email" to email,
+                            "profileImageUrl" to photoUrl.toString()
+                        )
+                    )
                     UserData(
                         userId = uid,
                         userName = displayName,
@@ -84,15 +92,17 @@ class GoogleAuthUiClient(
             }
             println("Signed In $userData")
 //            if (user.displayName?.isNotBlank() == true) {
-                return UserData(
-                    userId = user.uid,
-                    userName = userData?.get("name").toString().ifEmpty { user.displayName },
-                    profilePicUrl = userData?.get("profileImageUrl").toString()
-                            .ifEmpty { user.photoUrl.toString() }
-                    ,
-                    phoneNumber = userData?.get("phoneNumber").toString().ifEmpty { user.phoneNumber },
-                    email = userData?.get("email").toString().ifEmpty { user.email }
-                )
+            return UserData(
+                userId = user.uid,
+                userName = if (userData != null) userData["name"].toString()
+                    .ifEmpty { user.displayName } else user.displayName,
+                profilePicUrl = if (userData != null) userData["profileImageUrl"].toString()
+                    .ifEmpty { user.photoUrl.toString() } else user.photoUrl.toString(),
+                phoneNumber = if (userData != null) userData["phoneNumber"].toString()
+                    .ifEmpty { user.phoneNumber } else user.phoneNumber,
+                email = if (userData != null) userData["email"].toString()
+                    .ifEmpty { user.email } else user.email
+            )
 //            } else {
 //                if (userData != null) {
 //                    return UserData(
