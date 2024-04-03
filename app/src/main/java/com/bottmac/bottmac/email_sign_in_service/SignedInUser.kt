@@ -29,6 +29,11 @@ class SignedInUser @Inject constructor(application: Application) : AndroidViewMo
             oneTapClient = Identity.getSignInClient(context.applicationContext)
         )
 
+    fun getUserUpdatedData() {
+        viewModelScope.launch {
+            _signedInUserData.emit(googleAuthUiClient.getSignedInUser())
+        }
+    }
 
     init {
         viewModelScope.launch {

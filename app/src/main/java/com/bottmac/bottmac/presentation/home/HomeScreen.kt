@@ -40,7 +40,8 @@ fun HomeScreen(
     userData: UserData,
     isSearchActive: Boolean,
     mainNavController: NavController,
-    primaryNavHostController: NavHostController
+    primaryNavHostController: NavHostController,
+    onRetry: () -> Unit
 ) {
 
     var query by rememberSaveable {
@@ -129,7 +130,8 @@ fun HomeScreen(
             products = queryProductItems,
             userData = userData,
             mainNavController = mainNavController,
-            primaryNavHostController = primaryNavHostController
+            primaryNavHostController = primaryNavHostController,
+            onRetry = onRetry
         )
     }
 }

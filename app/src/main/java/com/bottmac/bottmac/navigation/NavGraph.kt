@@ -23,7 +23,6 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +59,8 @@ fun NavGraph(
     navController: NavHostController,
     googleAuthUiClient: GoogleAuthUiClient
 ) {
+    val cSignedInUser = hiltViewModel<SignedInUser>()
+
     NavHost(navController = navController, startDestination = "startUp") {
         navigation(startDestination = "loadingScreen", route = "startUp") {
             composable(route = "loadingScreen") {
@@ -196,9 +197,10 @@ fun NavGraph(
                         animationSpec = tween(durationMillis = 200, easing = LinearEasing)
                     )
                 }
-                ) {
+            ) {
                 MainScreenStructure(
                     navController = navController,
+                    cSignedInUser = cSignedInUser
                 )
             }
         }
@@ -225,7 +227,9 @@ fun NavGraph(
                 }
             ) {
                 profileOptionScreen = {
-                    OrderScreen(modifier = Modifier.fillMaxSize().padding(it))
+                    OrderScreen(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it))
                 }
                 ProfileOptionNavigationStructure(
                     navController = navController,
@@ -281,12 +285,17 @@ fun NavGraph(
                         animationSpec = tween(durationMillis = 200, easing = LinearEasing)
                     )
                 }
-            ) {backStackEntry ->
-                val cSignedInUser = backStackEntry.sharedViewModel<SignedInUser>(navController = navController)
-                val userData = cSignedInUser.signedInUserData.collectAsState()
+            ) { //backStackEntry ->
+//                val cSignedInUser =
+//                    backStackEntry.sharedViewModel<SignedInUser>(navController = navController)
+                val userData by cSignedInUser.signedInUserData.collectAsStateWithLifecycle()
 
-                profileOptionScreen = {paddingValues ->
-                    EditProfileScreen(modifier = Modifier.padding(paddingValues), userData = userData.value)
+                profileOptionScreen = { paddingValues ->
+                    EditProfileScreen(
+                        modifier = Modifier.padding(paddingValues),
+                        userData = userData,
+                        cSignedInUser = cSignedInUser
+                    )
                 }
                 ProfileOptionNavigationStructure(
                     navController = navController,

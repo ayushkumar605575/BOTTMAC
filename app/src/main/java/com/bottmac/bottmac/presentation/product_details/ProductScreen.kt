@@ -28,7 +28,8 @@ fun ProductScreen(
     products: List<ProductItem>,
     userData: UserData,
     mainNavController: NavController,
-    primaryNavHostController: NavController
+    primaryNavHostController: NavController,
+    onRetry: () -> Unit
 ) {
     val guestUser = userData.userId == null
     var isDialogBox by rememberSaveable {
@@ -53,14 +54,15 @@ fun ProductScreen(
                     ) {
                         Text(text = "Error Loading Product's Data")
                         Text(text = "Please check your internet connection")
-                        ElevatedButton(onClick = {
-                            mainNavController.navigate(NavigationRoutes.Home.route) {
-                                popUpTo(NavigationRoutes.Home.route) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
-                            }
-                        }) {
+                        ElevatedButton(onClick = onRetry
+//                            onRetry()
+//                            mainNavController.navigate(NavigationRoutes.Home.route) {
+//                                popUpTo(NavigationRoutes.Home.route) {
+//                                    inclusive = true
+//                                }
+//                                launchSingleTop = true
+//                            }
+                        ) {
                             Text(text = "Retry")
                         }
                     }

@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.mediumTopAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -46,8 +46,8 @@ import com.bottmac.bottmac.R
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.navigation.BottomBar
 import com.bottmac.bottmac.navigation.NavigationRoutes
-import com.bottmac.bottmac.presentation.product_details.ProductDetailsScreen
 import com.bottmac.bottmac.presentation.home.HomeScreen
+import com.bottmac.bottmac.presentation.product_details.ProductDetailsScreen
 import com.bottmac.bottmac.presentation.profile.ProfileScreen
 import com.bottmac.bottmac.product_view_model.ProductsViewModel
 
@@ -56,7 +56,12 @@ import com.bottmac.bottmac.product_view_model.ProductsViewModel
 @Composable
 fun MainScreenStructure(
     navController: NavHostController,
+    cSignedInUser: SignedInUser
 ) {
+    val productsViewModel = hiltViewModel<ProductsViewModel>()
+    val userData by cSignedInUser.signedInUserData.collectAsStateWithLifecycle()
+    val products by productsViewModel.productItems.collectAsStateWithLifecycle()
+
     val mainScreenNavController = rememberNavController()
 
     var isActiveSearch by rememberSaveable {
@@ -132,7 +137,7 @@ fun MainScreenStructure(
         bottomBar = { BottomBar(navController = mainScreenNavController) },
     ) { paddingValues ->
         // TODO: Check a way if possible to make these line of code execute 'n' number of times if internet is unavailable
-//        val productsViewModel = hiltViewModel<ProductsViewModel>()
+
 //        val products = productsViewModel.productItems.collectAsState().value
 
         NavHost(
@@ -155,19 +160,15 @@ fun MainScreenStructure(
                 }
             ) {
 
-
-                val cSignedInUser = hiltViewModel<SignedInUser>()
-                val userData = cSignedInUser.signedInUserData.collectAsState()
-                val productsViewModel = hiltViewModel<ProductsViewModel>()
-                val products = productsViewModel.productItems.collectAsState()
                 currentRoute = mainScreenNavController.currentDestination?.route.toString()
                 HomeScreen(
                     modifier = Modifier.padding(paddingValues),
-                    products = products.value,
-                    userData = userData.value,
+                    products = products,
+                    userData = userData,
                     isSearchActive = isActiveSearch,
                     mainNavController = mainScreenNavController,
-                    primaryNavHostController = navController
+                    primaryNavHostController = navController,
+                    onRetry = { productsViewModel.getLatestProduct() }
                 )
             }
 
@@ -187,8 +188,8 @@ fun MainScreenStructure(
                     )
                 }
             ) { backstackEntry ->
-                val productsViewModel = hiltViewModel<ProductsViewModel>()
-                val products = productsViewModel.productItems.collectAsState().value
+//                val productsViewModel = hiltViewModel<ProductsViewModel>()
+//                val products = productsViewModel.productItems.collectAsStateWithLifecycle().value
                 val productInd =
                     backstackEntry.arguments?.getString("productInd")?.toInt() ?: "".toInt()
                 if (products.isNotEmpty()) {
@@ -226,12 +227,11 @@ fun MainScreenStructure(
                     )
                 }
             ) {
-                val cSignedInUser = hiltViewModel<SignedInUser>()
-                val userData = cSignedInUser.signedInUserData.collectAsState()
+//                val userData = cSignedInUser.signedInUserData.collectAsStateWithLifecycle()
                 currentRoute = mainScreenNavController.currentDestination?.route.toString()
                 ProfileScreen(
                     modifier = Modifier.padding(paddingValues),
-                    userData = userData.value,
+                    userData = userData,
                     cSignedInUser = cSignedInUser,
                     primaryNavHostController = navController
                 )

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,21 +20,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.size.Size
-import com.bottmac.bottmac.R
+import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.firebase_service.FireBaseService
 import com.bottmac.bottmac.google_sign_in_service.UserData
 
 @Composable
 fun EditProfileScreen(
     modifier: Modifier,
-    userData: UserData
-    ) {
+    userData: UserData,
+    cSignedInUser: SignedInUser
+) {
     val context = LocalContext.current
     var isImageUploading by rememberSaveable {
         mutableStateOf(false)
@@ -45,7 +44,10 @@ fun EditProfileScreen(
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             if (uri != null) {
                 isImageUploading = true
-                firebaseServices.uploadImage(uri) { isImageUploading = it }
+                firebaseServices.uploadImage(uri) {
+                    isImageUploading = it
+                    cSignedInUser.getUserUpdatedData()
+                }
             }
         }
     Column(
