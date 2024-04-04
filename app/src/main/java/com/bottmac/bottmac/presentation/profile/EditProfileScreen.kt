@@ -1,5 +1,6 @@
 package com.bottmac.bottmac.presentation.profile
 
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -22,6 +23,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.size.Size
@@ -66,6 +69,13 @@ fun EditProfileScreen(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(context)
+                    .decoderFactory(
+                        if (Build.VERSION.SDK_INT >= 28) {
+                            ImageDecoderDecoder.Factory()
+                        } else {
+                            GifDecoder.Factory()
+                        }
+                    )
                     .data(userData.profilePicUrl)
                     .scale(Scale.FILL)
                     .size(Size.ORIGINAL)

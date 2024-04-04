@@ -361,7 +361,7 @@ fun RowScope.AddItem(
         },
         onClick = {
             navController.navigate(bottomNavigationRoute.route) {
-                popUpTo("mainScreen") {
+                popUpTo("startUp") {
                     saveState = true
                     inclusive = true
                 }

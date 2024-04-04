@@ -42,21 +42,36 @@ class GoogleAuthUiClient(
             val user = auth.signInWithCredential(googleCredentials).await().user
             SignInResult(
                 data = user?.run {
-                    db.document("users/${uid}").set(
-                        hashMapOf(
-                            "name" to displayName,
-                            "phoneNumber" to if (phoneNumber == null) "" else phoneNumber,
-                            "email" to email,
-                            "profileImageUrl" to photoUrl.toString()
+                    val oldUser = db.document("users/${uid}").get().await().data
+                    if (oldUser == null) {
+                        db.document("users/${uid}").set(
+                            hashMapOf(
+                                "name" to displayName,
+                                "phoneNumber" to if (phoneNumber == null) "" else phoneNumber,
+                                "email" to email,
+                                "profileImageUrl" to photoUrl.toString()
+                            )
                         )
-                    )
-                    UserData(
-                        userId = uid,
-                        userName = displayName,
-                        profilePicUrl = photoUrl?.toString(),
-                        phoneNumber = phoneNumber,
-                        email = email
-                    )
+                        UserData(
+                            userId = uid,
+                            userName = displayName,
+                            profilePicUrl = photoUrl?.toString(),
+                            phoneNumber = phoneNumber,
+                            email = email
+                        )
+                    } else {
+                        UserData(
+                            userId = uid,
+                            userName = oldUser["name"].toString()
+                                .ifEmpty { displayName },
+                            profilePicUrl = oldUser["profileImageUrl"].toString()
+                                .ifEmpty { photoUrl.toString() },
+                            phoneNumber = oldUser["phoneNumber"].toString()
+                                .ifEmpty { phoneNumber },
+                            email = oldUser["email"].toString()
+                                .ifEmpty { email }
+                        )
+                    }
                 },
                 errorMessage = null
             )

@@ -1,8 +1,10 @@
 package com.bottmac.bottmac.presentation.profile
 
+import android.os.Build.VERSION.SDK_INT
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,16 +18,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -34,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.size.Size
@@ -49,6 +59,9 @@ fun ProfileScreen(
     cSignedInUser: SignedInUser,
     primaryNavHostController: NavHostController
 ) {
+    var isProfilePicLoading by rememberSaveable {
+        mutableStateOf(true)
+    }
     val profileOptions = remember {
         mutableStateListOf(
             ProfileOptions.MyOrders,
@@ -98,21 +111,39 @@ fun ProfileScreen(
                         .height(120.dp)
                         .padding(vertical = 8.dp, horizontal = 16.dp)
                 ) {
-                    AsyncImage(
+                    Box(
                         modifier = Modifier
                             .clip(CircleShape)
                             .size(100.dp),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(userData.profilePicUrl)
-                            .scale(Scale.FILL)
-                            .size(Size.ORIGINAL)
-                            .placeholder(R.drawable.profile_placeholder)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(R.drawable.profile_placeholder),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Profile Picture"
-                    )
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .decoderFactory(
+                                    if (SDK_INT >= 28) {
+                                        ImageDecoderDecoder.Factory()
+                                    } else {
+                                        GifDecoder.Factory()
+                                    }
+                                )
+                                .data(userData.profilePicUrl)
+                                .scale(Scale.FILL)
+                                .size(Size.ORIGINAL)
+                                .placeholder(R.drawable.profile_placeholder)
+                                .crossfade(true)
+                                .build(),
+                            onSuccess = {
+                                println(it)
+                                isProfilePicLoading = false
+                            },
+                            placeholder = painterResource(R.drawable.profile_placeholder),
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "Profile Picture"
+                        )
+                        if (isProfilePicLoading) {
+                            CircularProgressIndicator(strokeCap = StrokeCap.Round)
+                        }
+                    }
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -163,7 +194,7 @@ fun ProfileScreen(
                     onClick = {
                         cSignedInUser.signOutCurrentUser()
                         primaryNavHostController.navigate(route = NavigationRoutes.SignIn.route) {
-                            popUpTo("main") {
+                            popUpTo("startUp") {
                                 inclusive = true
                             }
                         }
