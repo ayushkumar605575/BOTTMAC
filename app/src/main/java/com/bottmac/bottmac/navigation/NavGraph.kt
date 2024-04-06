@@ -118,12 +118,16 @@ fun NavGraph(
                     onSignInClick = {
                         scope.launch {
                             val signInIntentSender = googleAuthUiClient.signIn()
-                            launcher.launch(
-                                IntentSenderRequest.Builder(
-                                    signInIntentSender ?: return@launch
-                                ).build()
-                            )
-                            cSignedInUser.getUserUpdatedData()
+                            if (signInIntentSender == null) {
+                                cSignedInUser.getUserUpdatedData()
+                            } else {
+                                launcher.launch(
+                                    IntentSenderRequest.Builder(
+                                        signInIntentSender
+                                    ).build()
+                                )
+                                cSignedInUser.getUserUpdatedData()
+                            }
                         }
                     },
                     navController = navController

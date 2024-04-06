@@ -101,7 +101,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
 
-    implementation(libs.accompanist.insets)
+//    implementation(libs.accompanist.insets)
 //    implementation(libs.exoplayer.core)
 //    implementation(libs.exoplayer.ui)
 

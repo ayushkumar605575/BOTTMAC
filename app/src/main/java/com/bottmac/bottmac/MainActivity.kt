@@ -40,7 +40,11 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     LaunchedEffect(key1 = Unit) {
                         if (googleAuthUiClient.getSignedInUser().userId != null) {
-                            navController.navigate("mainScreen")
+                            navController.navigate("mainScreen") {
+                                popUpTo("startUp") {
+                                    inclusive = true
+                                }
+                            }
                         } else {
                             navController.navigate(NavigationRoutes.SignIn.route) {
                                 popUpTo("startUp") {

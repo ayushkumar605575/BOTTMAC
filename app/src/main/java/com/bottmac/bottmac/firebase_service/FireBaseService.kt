@@ -1,7 +1,6 @@
 package com.bottmac.bottmac.firebase_service
 
 import android.net.Uri
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage

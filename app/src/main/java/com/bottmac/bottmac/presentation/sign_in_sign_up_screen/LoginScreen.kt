@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,8 +36,6 @@ import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.Browse
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.InputType
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.SignInSignUpButton
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.TextInput
-import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
 fun LoginScreen(
@@ -52,108 +52,109 @@ fun LoginScreen(
     var password by rememberSaveable {
         mutableStateOf("")
     }
-    ProvideWindowInsets {
-        LazyColumn(
-            modifier = Modifier.padding(24.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .navigationBarsWithImePadding()
-                        .padding(start = 24.dp, end = 24.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.Top),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.logo),
-                        contentDescription = null,
-                        modifier = Modifier.size(120.dp),
-                    )
-                    TextInput(
-                        inputType = InputType.Email,
-                        keyboardActions = KeyboardActions(onNext = {
-                            passwordFocusRequester.requestFocus()
-                        }),
-                        value = email,
-                        onValueChange = { email = it },
-                        hasError = false
-                    )
-                    TextInput(
-                        inputType = InputType.Password,
-                        keyboardActions = KeyboardActions(onDone = {
-                            focusManager.clearFocus()
-                        }),
-                        focusRequester = passwordFocusRequester,
-                        value = password,
-                        pass = "L",
-                        onValueChange = { password = it },
-                        hasError = false
-                    )
-                    TextButton(onClick = {
-                        if (isValidEmail(email)) {
-                            firebase.sendPasswordResetLink(email)
-                            println("Password Reset link has been sent to your email")
-                        } else {
-                            println("Enter a Valid Email Address")
-                        }
-                    }) {
-                        Text(text = "Forgot Password?")
+    LazyColumn(
+        modifier = Modifier.padding(24.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        item {
+            Column(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
+                    .padding(start = 24.dp, end = 24.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.Top),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = null,
+                    modifier = Modifier.size(120.dp),
+                )
+                TextInput(
+                    inputType = InputType.Email,
+                    keyboardActions = KeyboardActions(onNext = {
+                        passwordFocusRequester.requestFocus()
+                    }),
+                    value = email,
+                    onValueChange = { email = it },
+                    hasError = false
+                )
+                TextInput(
+                    inputType = InputType.Password,
+                    keyboardActions = KeyboardActions(onDone = {
+                        focusManager.clearFocus()
+                    }),
+                    focusRequester = passwordFocusRequester,
+                    value = password,
+                    pass = "L",
+                    onValueChange = { password = it },
+                    hasError = false
+                )
+                TextButton(onClick = {
+                    if (isValidEmail(email)) {
+                        firebase.sendPasswordResetLink(email)
+                        println("Password Reset link has been sent to your email")
+                    } else {
+                        println("Enter a Valid Email Address")
                     }
+                }) {
+                    Text(text = "Forgot Password?")
                 }
             }
-            item {
-                Column(
-                    modifier = Modifier
-                        .navigationBarsWithImePadding()
-                        .padding(start = 24.dp, end = 24.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.Bottom),
-                    horizontalAlignment = Alignment.CenterHorizontally
+        }
+        item {
+            Column(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
+                    .padding(start = 24.dp, end = 24.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.Bottom),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val isValidCredential = (isValidEmail(email) && isValidPassword(password))
+                SignInSignUpButton(
+                    btnText = stringResource(R.string.sign_in),
+                    name = "",
+                    phoneNumber = "",
+                    email = email,
+                    password = password,
+                    isValidCredential = isValidCredential,
+                    navController = navController,
+                    onSignInClick = onSignInClick
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(
+                        start = 28.dp,
+                        end = 28.dp,
+                        top = 36.dp,
+                        bottom = 28.dp
+                    ),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                BrowseAsGuest(
+                    state = state,
+                    onSignInClick = onSignInClick,
+                    navController = navController
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val isValidCredential = (isValidEmail(email) && isValidPassword(password))
-                    SignInSignUpButton(
-                        btnText = stringResource(R.string.sign_in),
-                        name = "",
-                        phoneNumber = "",
-                        email = email,
-                        password = password,
-                        isValidCredential = isValidCredential,
-                        navController = navController,
-                        onSignInClick = onSignInClick
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier.padding(
-                            start = 28.dp,
-                            end = 28.dp,
-                            top = 36.dp,
-                            bottom = 28.dp
-                        ),
-                        thickness = 1.dp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    BrowseAsGuest(
-                        state = state,
-                        onSignInClick = onSignInClick,
-                        navController = navController
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Don't have an account?")
-                        TextButton(onClick = {
-                            navController.navigate(NavigationRoutes.SignUp.route)
-                            /*userType(2)*/
-                        }) {
-                            Text(text = "SIGN UP")
-                        }
+                    Text(text = "Don't have an account?")
+                    TextButton(onClick = {
+                        navController.navigate(NavigationRoutes.SignUp.route)
+                        /*userType(2)*/
+                    }) {
+                        Text(text = "SIGN UP")
                     }
                 }
             }
         }
     }
 }
+
 
 fun isValidEmail(email: String): Boolean {
     val emailPattern = "[a-zA-Z0-9._]+@[a-z]+\\.[a-z]{2,}"

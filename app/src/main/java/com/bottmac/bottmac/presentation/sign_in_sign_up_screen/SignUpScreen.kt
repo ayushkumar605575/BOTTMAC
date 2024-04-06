@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,8 +36,6 @@ import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.Browse
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.InputType
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.SignInSignUpButton
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.TextInput
-import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
 fun SignUpScreen(
@@ -63,138 +63,138 @@ fun SignUpScreen(
     var isChecked by rememberSaveable {
         mutableStateOf(false)
     }
-    ProvideWindowInsets {
-        Column(
-            modifier = Modifier
-                .navigationBarsWithImePadding()
-                .padding(start = 24.dp, end = 24.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Top),
+    Column(
+        modifier = Modifier
+            .navigationBarsPadding()
+            .imePadding()
+            .padding(start = 24.dp, end = 24.dp)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Top),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = null,
+            modifier = Modifier.size(120.dp),
+        )
+        LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = null,
-                modifier = Modifier.size(120.dp),
-            )
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                item {
-                    TextInput(
-                        inputType = InputType.Name,
-                        keyboardActions = KeyboardActions(onNext = {
+            item {
+                TextInput(
+                    inputType = InputType.Name,
+                    keyboardActions = KeyboardActions(onNext = {
 //                        focusManager.clearFocus()
-                            passwordFocusRequester.requestFocus()
-                        }),
-                        focusRequester = passwordFocusRequester,
-                        value = userName,
-                        onValueChange = { userName = it }
-                    )
-                }
-                item {
-                    // TODO Add Phone Number With Country Code
-                    TextInput(
-                        inputType = InputType.PhoneNumber,
-                        keyboardActions = KeyboardActions(onNext = {
+                        passwordFocusRequester.requestFocus()
+                    }),
+                    focusRequester = passwordFocusRequester,
+                    value = userName,
+                    onValueChange = { userName = it }
+                )
+            }
+            item {
+                // TODO Add Phone Number With Country Code
+                TextInput(
+                    inputType = InputType.PhoneNumber,
+                    keyboardActions = KeyboardActions(onNext = {
 //                        focusManager.clearFocus()
-                            passwordFocusRequester.requestFocus()
-                        }),
-                        focusRequester = passwordFocusRequester,
-                        value = phoneNumberWithCountryCode,
-                        onValueChange = {
-                            phoneNumberWithCountryCode = it
-                        }
-                    )
-                }
-                item {
-                    TextInput(
-                        inputType = InputType.Email,
-                        keyboardActions = KeyboardActions(onNext = {
+                        passwordFocusRequester.requestFocus()
+                    }),
+                    focusRequester = passwordFocusRequester,
+                    value = phoneNumberWithCountryCode,
+                    onValueChange = {
+                        phoneNumberWithCountryCode = it
+                    }
+                )
+            }
+            item {
+                TextInput(
+                    inputType = InputType.Email,
+                    keyboardActions = KeyboardActions(onNext = {
 //                        focusManager.clearFocus()
-                            passwordFocusRequester.requestFocus()
-                        }),
-                        focusRequester = passwordFocusRequester,
-                        value = email,
-                        onValueChange = { email = it },
-                        hasError = !isValidEmail(email)
-                    )
+                        passwordFocusRequester.requestFocus()
+                    }),
+                    focusRequester = passwordFocusRequester,
+                    value = email,
+                    onValueChange = { email = it },
+                    hasError = !isValidEmail(email)
+                )
+            }
+            item {
+                TextInput(
+                    inputType = InputType.Password,
+                    keyboardActions = KeyboardActions(onDone = {
+                        focusManager.clearFocus()
+                    }),
+                    focusRequester = passwordFocusRequester,
+                    value = password,
+                    onValueChange = { password = it },
+                    hasError = !isValidPassword(password)
+                )
+            }
+            item {
+                TextInput(
+                    inputType = InputType.ConfirmPassword,
+                    keyboardActions = KeyboardActions(onDone = {
+                        focusManager.clearFocus()
+                    }),
+                    focusRequester = passwordFocusRequester,
+                    value = confirmPassword,
+                    pass = password,
+                    onValueChange = { confirmPassword = it },
+                    hasError = !isValidPassword(confirmPassword) || (password != confirmPassword)
+                )
+            }
+            item {
+                Row {
+                    Checkbox(checked = isChecked, onCheckedChange = { isChecked = !isChecked })
+                    Text(text = "Provided details may be used by the company to contact you")
                 }
-                item {
-                    TextInput(
-                        inputType = InputType.Password,
-                        keyboardActions = KeyboardActions(onDone = {
-                            focusManager.clearFocus()
-                        }),
-                        focusRequester = passwordFocusRequester,
-                        value = password,
-                        onValueChange = { password = it },
-                        hasError = !isValidPassword(password)
-                    )
-                }
-                item {
-                    TextInput(
-                        inputType = InputType.ConfirmPassword,
-                        keyboardActions = KeyboardActions(onDone = {
-                            focusManager.clearFocus()
-                        }),
-                        focusRequester = passwordFocusRequester,
-                        value = confirmPassword,
-                        pass = password,
-                        onValueChange = { confirmPassword = it },
-                        hasError = !isValidPassword(confirmPassword) || (password != confirmPassword)
-                    )
-                }
-                item {
-                    Row {
-                        Checkbox(checked = isChecked, onCheckedChange = { isChecked = !isChecked })
-                        Text(text = "Provided details may be used by the company to contact you")
+            }
+            item { Spacer(modifier = Modifier.height(20.dp)) }
+            item {
+                val isValidCredential =
+                    (isValidEmail(email) && isValidPassword(password) && isChecked)
+                SignInSignUpButton(
+                    btnText = "SIGN UP",
+                    name = userName,
+                    phoneNumber = phoneNumberWithCountryCode,
+                    email = email,
+                    password = password,
+                    isValidCredential = isValidCredential,
+                    navController = navController,
+                    onSignInClick = onSignInClick,
+                )
+            }
+            item {
+                HorizontalDivider(
+                    modifier = Modifier.padding(
+                        start = 48.dp,
+                        end = 48.dp,
+                        top = 28.dp,
+                        bottom = 28.dp
+                    ),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            item {
+                BrowseAsGuest(
+                    state = state,
+                    onSignInClick = onSignInClick,
+                    navController = navController
+                )
+            }
+            item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Already have account?")
+                    TextButton(onClick = { navController.popBackStack() /*userType(1)*/ }) {
+                        Text(text = "SIGN IN")
                     }
                 }
-                item { Spacer(modifier = Modifier.height(20.dp)) }
-                item {
-                    val isValidCredential = (isValidEmail(email) && isValidPassword(password) && isChecked)
-                    SignInSignUpButton(
-                        btnText = "SIGN UP",
-                        name = userName,
-                        phoneNumber = phoneNumberWithCountryCode,
-                        email = email,
-                        password = password,
-                        isValidCredential = isValidCredential,
-                        navController = navController,
-                        onSignInClick = onSignInClick,
-                    )
-                }
-                item {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(
-                            start = 48.dp,
-                            end = 48.dp,
-                            top = 28.dp,
-                            bottom = 28.dp
-                        ),
-                        thickness = 1.dp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                item {
-                    BrowseAsGuest(
-                        state = state,
-                        onSignInClick = onSignInClick,
-                        navController = navController
-                    )
-                }
-                item {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Already have account?")
-                        TextButton(onClick = { navController.popBackStack() /*userType(1)*/ }) {
-                            Text(text = "SIGN IN")
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(24.dp))
-                }
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }

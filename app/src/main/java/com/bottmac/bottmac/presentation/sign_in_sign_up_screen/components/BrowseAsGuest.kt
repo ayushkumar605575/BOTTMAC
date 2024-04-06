@@ -1,6 +1,5 @@
 package com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement

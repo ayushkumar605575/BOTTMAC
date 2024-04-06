@@ -42,6 +42,7 @@ fun ProfilePicComp(
             },
         contentAlignment = Alignment.Center
     ) {
+        println(imageUrl)
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .decoderFactory(
@@ -51,7 +52,7 @@ fun ProfilePicComp(
                         GifDecoder.Factory()
                     }
                 )
-                .data(imageUrl)
+                .data(imageUrl ?: R.drawable.profile_placeholder)
                 .scale(Scale.FILL)
                 .size(Size.ORIGINAL)
                 .crossfade(true)

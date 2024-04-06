@@ -56,7 +56,7 @@ class GoogleAuthUiClient(
                         UserData(
                             userId = uid,
                             userName = displayName,
-                            profilePicUrl = photoUrl?.toString(),
+                            profilePicUrl = if (photoUrl == null) "" else photoUrl.toString(),
                             phoneNumber = phoneNumber,
                             email = email
                         )
@@ -66,7 +66,7 @@ class GoogleAuthUiClient(
                             userName = oldUser["name"].toString()
                                 .ifEmpty { displayName },
                             profilePicUrl = oldUser["profileImageUrl"].toString()
-                                .ifEmpty { photoUrl.toString() },
+                                .ifEmpty { "" },
                             phoneNumber = oldUser["phoneNumber"].toString()
                                 .ifEmpty { phoneNumber },
                             email = oldUser["email"].toString()
@@ -113,7 +113,7 @@ class GoogleAuthUiClient(
                 userName = if (userData != null) userData["name"].toString()
                     .ifEmpty { user.displayName } else user.displayName,
                 profilePicUrl = if (userData != null) userData["profileImageUrl"].toString()
-                    .ifEmpty { user.photoUrl.toString() } else user.photoUrl.toString(),
+                    .ifEmpty { if (user.photoUrl == null) "" else user.photoUrl.toString() } else "",
                 phoneNumber = if (userData != null) userData["phoneNumber"].toString()
                     .ifEmpty { user.phoneNumber } else user.phoneNumber,
                 email = if (userData != null) userData["email"].toString()

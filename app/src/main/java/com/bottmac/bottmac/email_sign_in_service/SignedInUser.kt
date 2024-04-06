@@ -1,10 +1,10 @@
 package com.bottmac.bottmac.email_sign_in_service
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
+import com.bottmac.bottmac.presentation.main_screen.displayToast
 import com.bottmac.bottmac.userdata.UserData
 import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignedInUser @Inject constructor(application: Application) : AndroidViewModel(application) {
 
-    private val _signedInUserData = MutableStateFlow(UserData(null, "", null, null, null))
+    private val _signedInUserData = MutableStateFlow(UserData(null, "", "", null, null))
 
     val signedInUserData: StateFlow<UserData>
         get() = _signedInUserData.asStateFlow()
@@ -42,11 +42,7 @@ class SignedInUser @Inject constructor(application: Application) : AndroidViewMo
     fun signOutCurrentUser() {
         viewModelScope.launch {
             googleAuthUiClient.signOut()
-            Toast.makeText(
-                context,
-                "User Signed Out",
-                Toast.LENGTH_LONG
-            ).show()
+            displayToast(context, "User Signed Out")
         }
     }
 
