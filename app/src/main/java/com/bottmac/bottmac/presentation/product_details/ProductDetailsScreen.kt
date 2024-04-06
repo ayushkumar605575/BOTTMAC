@@ -47,6 +47,9 @@ fun ProductDetailsScreen(
     BackHandler {
         onBack()
     }
+//    var activeProduct by remember {
+//        mutableStateOf<ByteArray?>(null)
+//    }
     var isDialogBox by rememberSaveable {
         mutableStateOf(false)
     }
@@ -54,6 +57,20 @@ fun ProductDetailsScreen(
     if (isDialogBox) {
         ProductDialogBox { isDialogBox = false }
     }
+
+//    if (activeProduct != null) {
+//        Column(
+//            modifier = modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ){
+//            ProductView(
+//                modifier = modifier.fillMaxSize(),
+//                activeProduct = activeProduct!!,
+//            ) { activeProduct = null }
+//        }
+//    }
+//    else {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -65,11 +82,17 @@ fun ProductDetailsScreen(
                 .height(348.dp)
                 .fillMaxWidth(),
         ) {
-
             LazyRow {
                 items(productsImages) { productsImage ->
                     AsyncImage(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize(),
+//                                .clickable {
+//                                    activeProduct = Base64.decode(
+//                                        productsImage,
+//                                        Base64.DEFAULT
+//                                    )
+//                                },
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(
                                 Base64.decode(
@@ -123,4 +146,118 @@ fun ProductDetailsScreen(
             Text("Call Now")
         }
     }
+//    }
 }
+
+//@Composable
+//fun ProductView(modifier: Modifier = Modifier, activeProduct: ByteArray, onDismiss: () -> Unit) {
+//    Box(
+//        modifier = modifier,
+//        contentAlignment = Alignment.Center
+//    ) {
+////        Scrim(modifier = modifier, onClose = onDismiss)
+//        DisplayProduct(modifier, activeProduct)
+//    }
+//}
+
+//@Composable
+//fun Scrim(modifier: Modifier, onClose: () -> Unit) {
+//    Box(modifier = modifier
+//        .pointerInput(Unit) { detectTapGestures { onClose() } }
+//        .background(Color.DarkGray.copy(alpha = 0.75f))
+//    )
+//}
+
+//@Composable
+//fun DisplayProduct(modifier: Modifier = Modifier, activeProduct: ByteArray) {
+//    var offSet by remember {
+//        mutableStateOf(Offset.Zero)
+//    }
+//    var zoom by remember {
+//        mutableFloatStateOf(0f)
+//    }
+//    AsyncImage(
+//        modifier = modifier
+//            .aspectRatio(1f)
+//            .clipToBounds()
+////            .pointerInput(Unit) {
+////                detectTransformGestures { centroid, pan, gestureZoom, _ ->
+////                    offSet = offSet.calculateNewOffset(centroid, pan, zoom, gestureZoom, size)
+////                    zoom = maxOf(1f, zoom * gestureZoom)
+////                }
+////            }
+//            .pointerInput(Unit) {
+//                detectTapGestures(
+//                    onDoubleTap = {offset ->
+//                        zoom = if (zoom > 1f) 1f else 2f
+//                        offSet = calculateDoubleTapOffset(zoom, size, offset)
+//                        if (zoom == 1f) {
+//                            offSet = Offset.Zero
+//                        }
+//                    }
+//                )
+//            }
+//            .graphicsLayer {
+//                translationX = -offSet.x
+//                translationY = -offSet.y
+//                scaleX = zoom
+//                scaleY = zoom
+//                transformOrigin = TransformOrigin(0f, 0f)
+//            },
+//        model = ImageRequest.Builder(LocalContext.current)
+//            .data(activeProduct)
+//            .crossfade(500)
+//            .build(),
+//        contentScale = ContentScale.Crop,
+//        contentDescription = null
+//    )
+//}
+
+//private fun Offset.calculateNewOffset(
+//    centroid: Offset,
+//    pan: Offset,
+//    zoom: Float,
+//    gestureZoom: Float,
+//    size: IntSize
+//): Offset {
+//    // 1. Calculate the focal point for zooming
+//    val focalPoint = centroid + pan
+//
+//    // 2. Apply zoom factor relative to focal point
+//    val newOffsetX = (this.x - focalPoint.x) * zoom * gestureZoom + focalPoint.x
+//
+//    // 3. Apply zoom factor relative to focal point for y-axis
+//    val newOffsetY = (this.y - focalPoint.y) * zoom * gestureZoom + focalPoint.y
+//
+//    // 4. Clamp the new offset within image bounds (optional)
+//    val clampedOffsetX = newOffsetX.coerceIn(0f, size.width.toFloat() - 1f)
+//    val clampedOffsetY = newOffsetY.coerceIn(0f, size.height.toFloat() - 1f)
+//
+//    // 5. Return the new offset
+//    return Offset(clampedOffsetX, clampedOffsetY)
+//}
+//private fun Offset.calculateNewOffset(
+//    centroid: Offset,
+//    pan: Offset,
+//    zoom: Float,
+//    gestureZoom: Float,
+//    size: IntSize
+//): Offset {
+//return Offset(centroid.x, centroid.y)
+//}
+//
+//fun calculateDoubleTapOffset(zoom: Float, size: IntSize, offset: Offset): Offset {
+//    println(zoom)
+//    println(size)
+//    println(offset)
+////    val newOffSet = Offset(-(offset.x - (size.width/2f)).coerceIn(-size.width/2f, size.width/2f),0f)
+//
+//
+//    // No need to calculate center offset as zooming happens around current position
+//    return Offset(
+//       x = -(offset.x - (size.width/2f)).coerceIn(-size.width/2f, size.width/2f),
+//        y = 0f
+//    )
+//}
+
+

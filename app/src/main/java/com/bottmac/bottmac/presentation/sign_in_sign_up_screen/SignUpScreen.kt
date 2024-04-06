@@ -162,6 +162,7 @@ fun SignUpScreen(
                         password = password,
                         isValidCredential = isValidCredential,
                         navController = navController,
+                        onSignInClick = onSignInClick,
                     )
                 }
                 item {

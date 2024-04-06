@@ -121,6 +121,7 @@ fun LoginScreen(
                         password = password,
                         isValidCredential = isValidCredential,
                         navController = navController,
+                        onSignInClick = onSignInClick
                     )
                     HorizontalDivider(
                         modifier = Modifier.padding(

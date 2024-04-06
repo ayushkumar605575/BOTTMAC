@@ -5,7 +5,7 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
-import com.bottmac.bottmac.google_sign_in_service.UserData
+import com.bottmac.bottmac.userdata.UserData
 import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

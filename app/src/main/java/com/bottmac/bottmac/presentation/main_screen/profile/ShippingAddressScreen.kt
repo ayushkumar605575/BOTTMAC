@@ -1,4 +1,4 @@
-package com.bottmac.bottmac.presentation.profile
+package com.bottmac.bottmac.presentation.main_screen.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

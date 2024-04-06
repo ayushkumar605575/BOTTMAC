@@ -1,6 +1,5 @@
 package com.bottmac.bottmac.navigation
 
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -44,12 +43,13 @@ import androidx.navigation.navigation
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
 import com.bottmac.bottmac.google_sign_in_service.SignInViewModel
-import com.bottmac.bottmac.presentation.home_screen.MainScreenStructure
-import com.bottmac.bottmac.presentation.profile.EditProfileScreen
-import com.bottmac.bottmac.presentation.profile.OrderScreen
-import com.bottmac.bottmac.presentation.profile.ProfileOptionNavigationStructure
-import com.bottmac.bottmac.presentation.profile.ProfileOptions
-import com.bottmac.bottmac.presentation.profile.ShippingAddressScreen
+import com.bottmac.bottmac.presentation.main_screen.displayToast
+import com.bottmac.bottmac.presentation.main_screen.MainScreenStructure
+import com.bottmac.bottmac.presentation.main_screen.profile.EditProfileScreen
+import com.bottmac.bottmac.presentation.main_screen.profile.OrderScreen
+import com.bottmac.bottmac.presentation.main_screen.profile.ProfileOptionNavigationStructure
+import com.bottmac.bottmac.presentation.main_screen.profile.ProfileOptions
+import com.bottmac.bottmac.presentation.main_screen.profile.ShippingAddressScreen
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.LoginScreen
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.SignUpScreen
 import kotlinx.coroutines.launch
@@ -103,12 +103,9 @@ fun NavGraph(
                 }
                 LaunchedEffect(key1 = state.isSignInSuccessful) {
                     if (state.isSignInSuccessful) {
-                        Toast.makeText(
-                            context,
-                            "User Successfully Logged In",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        displayToast(context, "User Successfully Logged In")
                         viewModel.resetState()
+                        cSignedInUser.getUserUpdatedData()
                         navController.navigate("mainScreen") {
                             popUpTo("startUp") {
                                 inclusive = true
@@ -126,6 +123,7 @@ fun NavGraph(
                                     signInIntentSender ?: return@launch
                                 ).build()
                             )
+                            cSignedInUser.getUserUpdatedData()
                         }
                     },
                     navController = navController
@@ -226,10 +224,10 @@ fun NavGraph(
                     )
                 }
             ) {
-                profileOptionScreen = {
+                profileOptionScreen = {paddingValue ->
                     OrderScreen(modifier = Modifier
                         .fillMaxSize()
-                        .padding(it))
+                        .padding(paddingValue))
                 }
                 ProfileOptionNavigationStructure(
                     navController = navController,
@@ -257,8 +255,8 @@ fun NavGraph(
                     )
                 }
             ) {
-                profileOptionScreen = {
-                    ShippingAddressScreen(modifier = Modifier.padding(it))
+                profileOptionScreen = {paddingValue ->
+                    ShippingAddressScreen(modifier = Modifier.padding(paddingValue))
                 }
                 ProfileOptionNavigationStructure(
                     navController = navController,
@@ -290,11 +288,13 @@ fun NavGraph(
 //                    backStackEntry.sharedViewModel<SignedInUser>(navController = navController)
                 val userData by cSignedInUser.signedInUserData.collectAsStateWithLifecycle()
 
-                profileOptionScreen = { paddingValues ->
+                profileOptionScreen = { paddingValue ->
                     EditProfileScreen(
-                        modifier = Modifier.padding(paddingValues),
+                        modifier = Modifier.padding(paddingValue),
                         userData = userData,
-                        cSignedInUser = cSignedInUser
+                        onDetailsUpdate = {
+                            cSignedInUser.getUserUpdatedData()
+                        }
                     )
                 }
                 ProfileOptionNavigationStructure(

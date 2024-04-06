@@ -1,6 +1,7 @@
 package com.bottmac.bottmac.firebase_service
 
 import android.net.Uri
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -14,7 +15,7 @@ class FireBaseService {
     //    fun get st
     fun uploadImage(
         profilePic: Uri,
-        isUploading: (Boolean) -> Unit
+        isUploading: () -> Unit
     ) {
         if (auth.currentUser != null) {
             val uid = auth.currentUser!!.uid
@@ -25,19 +26,19 @@ class FireBaseService {
                             snapshot.reference.update(
                                 mapOf<String, String>("profileImageUrl" to downloadLink.toString())
                             )
-                            isUploading(false)
+                            isUploading()
                         }
                     }
                 }
 //            auth.currentUser!!.uid
         } else {
-            isUploading(false)
+            isUploading()
         }
     }
 
-    fun sendEmailVerification() {
-        auth.currentUser?.sendEmailVerification()
-    }
+//    fun sendEmailVerification() {
+//        auth.currentUser?.sendEmailVerification()
+//    }
 
     suspend fun getTokenId(): String {
         println(auth.currentUser?.getIdToken(true)?.await()?.token?.length ?: "")
@@ -48,4 +49,16 @@ class FireBaseService {
         auth.sendPasswordResetEmail(email)
     }
 
+    fun updateProfileDetails(userName: String, userPhoneNumber: String, isUpdating: (Boolean) -> Unit) {
+        if (auth.currentUser != null) {
+            val uid = auth.currentUser!!.uid
+            db.document("users/${uid}").get().addOnSuccessListener { snapshot ->
+//            profileUploadTask.storage.downloadUrl.addOnSuccessListener { downloadLink ->
+                snapshot.reference.update(
+                    mapOf<String, String>("name" to userName, "phoneNumber" to userPhoneNumber)
+                )
+                isUpdating(false)
+            }
+        }
+    }
 }

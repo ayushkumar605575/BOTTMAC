@@ -1,4 +1,4 @@
-package com.bottmac.bottmac.presentation.home
+package com.bottmac.bottmac.presentation.main_screen.home
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -28,9 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.bottmac.bottmac.google_sign_in_service.UserData
 import com.bottmac.bottmac.models.ProductItem
 import com.bottmac.bottmac.presentation.product_details.ProductScreen
+import com.bottmac.bottmac.userdata.UserData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,6 +128,7 @@ fun HomeScreen(
         ProductScreen(
             modifier = Modifier,
             products = queryProductItems,
+            isSearchActive = isSearchActive,
             userData = userData,
             mainNavController = mainNavController,
             primaryNavHostController = primaryNavHostController,

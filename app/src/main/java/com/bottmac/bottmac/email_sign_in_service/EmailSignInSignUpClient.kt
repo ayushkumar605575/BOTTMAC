@@ -66,6 +66,7 @@ class EmailSignInSignUpClient {
             auth.signInWithEmailAndPassword(email, password)
                 .await().user!!.isEmailVerified to 1 //?: false
 
+
         } catch (e: Exception) {
             false to 0
         }

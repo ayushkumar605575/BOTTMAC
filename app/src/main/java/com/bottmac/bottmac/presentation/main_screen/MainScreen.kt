@@ -1,5 +1,7 @@
-package com.bottmac.bottmac.presentation.home_screen
+package com.bottmac.bottmac.presentation.main_screen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -46,9 +48,9 @@ import com.bottmac.bottmac.R
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.navigation.BottomBar
 import com.bottmac.bottmac.navigation.NavigationRoutes
-import com.bottmac.bottmac.presentation.home.HomeScreen
+import com.bottmac.bottmac.presentation.main_screen.home.HomeScreen
+import com.bottmac.bottmac.presentation.main_screen.profile.ProfileScreen
 import com.bottmac.bottmac.presentation.product_details.ProductDetailsScreen
-import com.bottmac.bottmac.presentation.profile.ProfileScreen
 import com.bottmac.bottmac.product_view_model.ProductsViewModel
 
 
@@ -58,7 +60,7 @@ fun MainScreenStructure(
     navController: NavHostController,
     cSignedInUser: SignedInUser
 ) {
-    cSignedInUser.getUserUpdatedData()
+//    cSignedInUser.getUserUpdatedData()
     val productsViewModel = hiltViewModel<ProductsViewModel>()
     val userData by cSignedInUser.signedInUserData.collectAsStateWithLifecycle()
     val products by productsViewModel.productItems.collectAsStateWithLifecycle()
@@ -191,14 +193,17 @@ fun MainScreenStructure(
             ) { backstackEntry ->
 //                val productsViewModel = hiltViewModel<ProductsViewModel>()
 //                val products = productsViewModel.productItems.collectAsStateWithLifecycle().value
-                val productInd =
-                    backstackEntry.arguments?.getString("productInd")?.toInt() ?: "".toInt()
+                val productId =
+                    backstackEntry.arguments?.getString("productInd")?.toInt() ?: -1
+                val productItemDetail = products.first {
+                    it.productId == productId
+                }
                 if (products.isNotEmpty()) {
                     ProductDetailsScreen(
                         modifier = Modifier.padding(paddingValues),
-                        productName = products[productInd].productName,
-                        productsFeatures = products[productInd].productFeatures.split("\\n"),
-                        productsImages = products[productInd].productImage
+                        productName = productItemDetail.productName,
+                        productsFeatures = productItemDetail.productFeatures.split("\\n"),
+                        productsImages = productItemDetail.productImage
                     ) {
                         mainScreenNavController.popBackStack()
                     }
@@ -241,3 +246,6 @@ fun MainScreenStructure(
     }
 }
 
+fun displayToast(context: Context, msg: String) {
+    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+}

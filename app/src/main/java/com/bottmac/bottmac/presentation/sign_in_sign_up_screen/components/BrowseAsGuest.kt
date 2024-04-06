@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bottmac.bottmac.R
 import com.bottmac.bottmac.google_sign_in_service.SignedInState
+import com.bottmac.bottmac.presentation.main_screen.displayToast
 
 @Composable
 fun BrowseAsGuest(
@@ -39,11 +40,7 @@ fun BrowseAsGuest(
     val context = LocalContext.current
     LaunchedEffect(key1 = state.signError) {
         state.signError?.let { error ->
-            Toast.makeText(
-                context,
-                error,
-                Toast.LENGTH_LONG
-            ).show()
+            displayToast(context, error)
         }
     }
 
@@ -68,7 +65,7 @@ fun BrowseAsGuest(
 
         TextButton(
             onClick = {
-                navController.navigate("main") {
+                navController.navigate("mainScreen") {
                     popUpTo("startUp") {
                         inclusive = true
                     }

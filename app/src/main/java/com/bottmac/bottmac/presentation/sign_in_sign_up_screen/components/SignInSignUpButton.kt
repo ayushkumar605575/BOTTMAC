@@ -44,6 +44,7 @@ fun SignInSignUpButton(
     password: String,
     isValidCredential: Boolean,
     navController: NavController,
+    onSignInClick: () -> Unit,
 ) {
     val emailSignInSignUpClient = EmailSignInSignUpClient()
     var waiting by rememberSaveable {
@@ -59,6 +60,7 @@ fun SignInSignUpButton(
                 println(isVerifiedUser)
                 waiting = false
                 if (isVerifiedUser.first) {
+                    onSignInClick()
                     navController.navigate("mainScreen") {
                         popUpTo("startUp") {
                             inclusive = true
