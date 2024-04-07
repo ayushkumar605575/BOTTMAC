@@ -7,13 +7,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -28,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -43,8 +39,8 @@ import androidx.navigation.navigation
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
 import com.bottmac.bottmac.google_sign_in_service.SignInViewModel
-import com.bottmac.bottmac.presentation.main_screen.displayToast
 import com.bottmac.bottmac.presentation.main_screen.MainScreenStructure
+import com.bottmac.bottmac.presentation.main_screen.displayToast
 import com.bottmac.bottmac.presentation.main_screen.profile.EditProfileScreen
 import com.bottmac.bottmac.presentation.main_screen.profile.OrderScreen
 import com.bottmac.bottmac.presentation.main_screen.profile.ProfileOptionNavigationStructure
@@ -62,14 +58,14 @@ fun NavGraph(
     val cSignedInUser = hiltViewModel<SignedInUser>()
 
     NavHost(navController = navController, startDestination = "startUp") {
-        navigation(startDestination = "loadingScreen", route = "startUp") {
-            composable(route = "loadingScreen") {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) { CircularProgressIndicator() }
-            }
+        navigation(startDestination = NavigationRoutes.SignIn.route, route = "startUp") {
+//            composable(route = "loadingScreen") {
+//                Column(
+//                    modifier = Modifier.fillMaxSize(),
+//                    verticalArrangement = Arrangement.Center,
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) { CircularProgressIndicator() }
+//            }
             composable(
                 route = NavigationRoutes.SignIn.route,
                 enterTransition = {
@@ -117,17 +113,19 @@ fun NavGraph(
                     state = state,
                     onSignInClick = {
                         scope.launch {
+                            // TODO: Fix the user sign In error with different account
+                            cSignedInUser.getUserUpdatedData()
                             val signInIntentSender = googleAuthUiClient.signIn()
-                            if (signInIntentSender == null) {
-                                cSignedInUser.getUserUpdatedData()
-                            } else {
-                                launcher.launch(
-                                    IntentSenderRequest.Builder(
-                                        signInIntentSender
-                                    ).build()
-                                )
-                                cSignedInUser.getUserUpdatedData()
-                            }
+//                            if (signInIntentSender == null) {
+//                                cSignedInUser.getUserUpdatedData()
+//                            } else {
+                            launcher.launch(
+                                IntentSenderRequest.Builder(
+                                    signInIntentSender ?: return@launch
+                                ).build()
+                            )
+//                                cSignedInUser.getUserUpdatedData()
+//                            }
                         }
                     },
                     navController = navController
@@ -228,10 +226,12 @@ fun NavGraph(
                     )
                 }
             ) {
-                profileOptionScreen = {paddingValue ->
-                    OrderScreen(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValue))
+                profileOptionScreen = { paddingValue ->
+                    OrderScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValue)
+                    )
                 }
                 ProfileOptionNavigationStructure(
                     navController = navController,
@@ -259,7 +259,7 @@ fun NavGraph(
                     )
                 }
             ) {
-                profileOptionScreen = {paddingValue ->
+                profileOptionScreen = { paddingValue ->
                     ShippingAddressScreen(modifier = Modifier.padding(paddingValue))
                 }
                 ProfileOptionNavigationStructure(

@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignedInUser @Inject constructor(application: Application) : AndroidViewModel(application) {
 
-    private val _signedInUserData = MutableStateFlow(UserData(null, "", "", null, null))
+    private val _signedInUserData = MutableStateFlow(UserData(null, null, null, null, null))
 
     val signedInUserData: StateFlow<UserData>
         get() = _signedInUserData.asStateFlow()
@@ -34,7 +34,6 @@ class SignedInUser @Inject constructor(application: Application) : AndroidViewMo
             _signedInUserData.emit(googleAuthUiClient.getSignedInUser())
         }
     }
-
     init {
         getUserUpdatedData()
     }
@@ -42,6 +41,7 @@ class SignedInUser @Inject constructor(application: Application) : AndroidViewMo
     fun signOutCurrentUser() {
         viewModelScope.launch {
             googleAuthUiClient.signOut()
+            _signedInUserData.emit(UserData(null, null, null, null, null))
             displayToast(context, "User Signed Out")
         }
     }

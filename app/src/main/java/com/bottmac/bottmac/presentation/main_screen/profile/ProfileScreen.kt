@@ -150,6 +150,7 @@ fun ProfileScreen(
                     modifier = Modifier.padding(bottom = 8.dp),
                     onClick = {
                         cSignedInUser.signOutCurrentUser()
+//                        cSignedInUser.getUserUpdatedData()
                         primaryNavHostController.navigate(route = NavigationRoutes.SignIn.route) {
                             popUpTo("startUp") {
                                 inclusive = true

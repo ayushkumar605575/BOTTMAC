@@ -40,7 +40,7 @@ fun ProfileOptionNavigationStructure(
                         modifier = Modifier.padding(start = 12.dp, top = 8.dp)
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.logo),
+                            painter = painterResource(id = R.drawable.logo_png),
                             contentDescription = null,
                             modifier = Modifier.size(40.dp),
                         )

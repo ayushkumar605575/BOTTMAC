@@ -42,7 +42,6 @@ fun ProfilePicComp(
             },
         contentAlignment = Alignment.Center
     ) {
-        println(imageUrl)
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .decoderFactory(
@@ -58,7 +57,6 @@ fun ProfilePicComp(
                 .crossfade(true)
                 .build(),
             onSuccess = {
-//                println(it)
                 onProfilePicLoad(false)
             },
             placeholder = painterResource(R.drawable.profile_placeholder),

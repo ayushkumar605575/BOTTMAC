@@ -106,7 +106,7 @@ class GoogleAuthUiClient(
                 e.printStackTrace()
                 null
             }
-            println("Signed In $userData")
+//            println("Signed In $userData")
 //            if (user.displayName?.isNotBlank() == true) {
             return UserData(
                 userId = user.uid,
