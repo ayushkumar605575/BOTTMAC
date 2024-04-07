@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,6 +33,7 @@ import com.bottmac.bottmac.R
 import com.bottmac.bottmac.firebase_service.FireBaseService
 import com.bottmac.bottmac.google_sign_in_service.SignedInState
 import com.bottmac.bottmac.navigation.NavigationRoutes
+import com.bottmac.bottmac.presentation.main_screen.displayToast
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.BrowseAsGuest
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.InputType
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.SignInSignUpButton
@@ -42,8 +44,10 @@ fun LoginScreen(
     state: SignedInState,
     onGoogleSignInClick: () -> Unit,
     onSignInClick: () -> Unit,
+    onGuest: () -> Unit,
     navController: NavController,
 ) {
+    val context = LocalContext.current
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
     val firebase = FireBaseService()
@@ -95,9 +99,9 @@ fun LoginScreen(
                 TextButton(onClick = {
                     if (isValidEmail(email)) {
                         firebase.sendPasswordResetLink(email)
-                        println("Password Reset link has been sent to your email")
+                        displayToast(context = context, msg = "Password Reset link has been sent to your email")
                     } else {
-                        println("Enter a Valid Email Address")
+                        displayToast(context = context, msg = "Enter a Valid Email Address")
                     }
                 }) {
                     Text(text = "Forgot Password?")
@@ -123,7 +127,8 @@ fun LoginScreen(
                     password = password,
                     isValidCredential = isValidCredential,
                     navController = navController,
-                    onSignInClick = onSignInClick
+                    onSignInClick = onSignInClick,
+                    onInvalidSignIn = onGuest
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(
@@ -138,7 +143,14 @@ fun LoginScreen(
                 BrowseAsGuest(
                     state = state,
                     onSignInClick = onGoogleSignInClick,
-                    navController = navController
+                    onGuest = {
+                        onGuest()
+                        navController.navigate("mainScreen") {
+                            popUpTo("startUp") {
+                                inclusive = true
+                            }
+                        }
+                    },
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -146,7 +158,6 @@ fun LoginScreen(
                     Text(text = "Don't have an account?")
                     TextButton(onClick = {
                         navController.navigate(NavigationRoutes.SignUp.route)
-                        /*userType(2)*/
                     }) {
                         Text(text = "SIGN UP")
                     }

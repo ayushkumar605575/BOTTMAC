@@ -94,7 +94,7 @@ fun EditProfileScreen(
 
         OutlinedTextField(
             value = userPhoneNumber,
-            onValueChange = { userPhoneNumber = it },
+            onValueChange = { userPhoneNumber = if (it.length >= 13) it.substring(0,13) else it },
             label = { Text(text = "Phone Number", maxLines = 1) },
             modifier = Modifier
                 .fillMaxWidth()

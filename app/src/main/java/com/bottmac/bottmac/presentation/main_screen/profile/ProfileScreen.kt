@@ -27,12 +27,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.bottmac.bottmac.email_sign_in_service.SignedInUser
 import com.bottmac.bottmac.navigation.NavigationRoutes
+import com.bottmac.bottmac.presentation.main_screen.displayToast
 import com.bottmac.bottmac.userdata.UserData
 
 @Composable
@@ -42,6 +44,7 @@ fun ProfileScreen(
     cSignedInUser: SignedInUser,
     primaryNavHostController: NavHostController
 ) {
+    val context = LocalContext.current
     var isProfilePicLoading by rememberSaveable {
         mutableStateOf(true)
     }
@@ -150,12 +153,12 @@ fun ProfileScreen(
                     modifier = Modifier.padding(bottom = 8.dp),
                     onClick = {
                         cSignedInUser.signOutCurrentUser()
-//                        cSignedInUser.getUserUpdatedData()
                         primaryNavHostController.navigate(route = NavigationRoutes.SignIn.route) {
                             popUpTo("startUp") {
                                 inclusive = true
                             }
                         }
+                        displayToast(context = context, "User Signed Out")//                        cSignedInUser.getUserUpdatedData()
                     }) {
                     Text(text = "Sign Out")
                 }

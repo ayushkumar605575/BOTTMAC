@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -58,8 +59,9 @@ import com.bottmac.bottmac.product_view_model.ProductsViewModel
 fun MainScreenStructure(
     navController: NavHostController,
     cSignedInUser: SignedInUser,
-    productsViewModel: ProductsViewModel,
 ) {
+    val productsViewModel = hiltViewModel<ProductsViewModel>()
+
     val userData by cSignedInUser.signedInUserData.collectAsStateWithLifecycle()
     val products by productsViewModel.productItems.collectAsStateWithLifecycle()
 
@@ -137,9 +139,6 @@ fun MainScreenStructure(
         },
         bottomBar = { BottomBar(navController = mainScreenNavController) },
     ) { paddingValues ->
-        // TODO: Check a way if possible to make these line of code execute 'n' number of times if internet is unavailable
-
-//        val products = productsViewModel.productItems.collectAsState().value
 
         NavHost(
             navController = mainScreenNavController,

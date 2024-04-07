@@ -1,5 +1,6 @@
 package com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
@@ -28,12 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bottmac.bottmac.email_sign_in_service.EmailSignInSignUpClient
 import com.bottmac.bottmac.navigation.NavigationRoutes
+import com.bottmac.bottmac.presentation.main_screen.displayToast
 
 @Composable
 fun SignInSignUpButton(
@@ -43,9 +47,12 @@ fun SignInSignUpButton(
     email: String,
     password: String,
     isValidCredential: Boolean,
+    hasConsent: Boolean? = null,
     navController: NavController,
     onSignInClick: () -> Unit,
+    onInvalidSignIn: () ->Unit,
 ) {
+    val context = LocalContext.current
     val emailSignInSignUpClient = EmailSignInSignUpClient()
     var waiting by rememberSaveable {
         mutableStateOf(false)
@@ -68,25 +75,35 @@ fun SignInSignUpButton(
                     }
                 } else {
                     if (isVerifiedUser.second == 0) {
-                        println("Incorrect UserName or Password")
+                        displayToast(context = context, msg = "Incorrect UserName or Password")
+                    } else {
+                        onInvalidSignIn()
                     }
                 }
             } else {
-                if (emailSignInSignUpClient.signUpWithEmailAndPassword(
+                if (name.isEmpty() || phoneNumber.isEmpty()) {
+                    waiting = false
+                    return@LaunchedEffect
+                } else if (emailSignInSignUpClient.signUpWithEmailAndPassword(
                         name,
                         phoneNumber,
                         email,
                         password
                     )
                 ) {
+                    displayToast(
+                        context = context,
+                        msg = "Verification link has been sent to your mail."
+                    )
                     emailSignInSignUpClient.signOut()
+                    onSignInClick()
                     navController.navigate(NavigationRoutes.SignIn.route) {
-                        popUpTo("mainScreen") {
+                        popUpTo("main") {
                             inclusive = true
                         }
                     }
                 } else {
-                    println("Email or Password in incorrect")
+                    displayToast(context = context, msg = "Email or Password in incorrect")
                 }
             }
         }
@@ -95,22 +112,32 @@ fun SignInSignUpButton(
 
     Column {
         if (!isVerifiedUser.first && isVerifiedUser.second == 1) {
-            println("Please verify the email") // TODO Check this line
-            TextButton(onClick = {
-                emailSignInSignUpClient.verifyEmail()
-            }) {
+            displayToast(context = context, msg = "Please verify the email") // TODO Check this line
+            TextButton(
+                modifier = Modifier.padding(start = 20.dp),
+                onClick = {
+                    emailSignInSignUpClient.verifyEmail()
+                    emailSignInSignUpClient.signOut()
+                }) {
                 Text(text = "SEND EMAIL VERIFICATION LINK")
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
         ElevatedButton(
             modifier = Modifier
-                .fillMaxWidth()
                 .heightIn(48.dp),
             enabled = !waiting && !isVerifiedUser.first,
             onClick = {
+                if (btnText != "SIGN IN"){
+                    if (name.isEmpty() || phoneNumber.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                        displayToast(context = context, msg = "Complete the Details")
+                    }
+                    else if (hasConsent != null && !hasConsent) {
+                        displayToast(context = context, msg = "Please agree the consent!")
+                    }
+                }
                 if (!isValidCredential) {
-                    println("Email or password is Empty")
+                    displayToast(context = context, msg = "Incorrect Email or Password")
                 } else {
                     waiting = !waiting
                 }
@@ -146,13 +173,24 @@ fun SignInSignUpButton(
                     ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = btnText,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    if (waiting || isVerifiedUser.first) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    AnimatedContent(
+                        targetState = waiting || isVerifiedUser.first,
+                        label = ""
+                    ) { isSigning ->
+                        if (isSigning) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Text(
+                                text = btnText,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+
+                        }
                     }
                 }
             }

@@ -51,7 +51,11 @@ fun ProfilePicComp(
                         GifDecoder.Factory()
                     }
                 )
-                .data(imageUrl ?: R.drawable.profile_placeholder)
+                .data(
+                    if (imageUrl.isNullOrEmpty()) {
+                        R.drawable.profile_placeholder
+                    } else imageUrl
+                )
                 .scale(Scale.FILL)
                 .size(Size.ORIGINAL)
                 .crossfade(true)

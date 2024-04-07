@@ -22,6 +22,9 @@ class EmailSignInSignUpClient {
         password: String
     ): Boolean = try {
         val newUser = auth.createUserWithEmailAndPassword(email, password).await()
+//        println("Newwwwwwww")
+//        println(newUser.user!!.uid)
+//        println("Newwwwwwww")
         newUser.user!!.sendEmailVerification()
         db.document("users/${newUser.user!!.uid}").set(
             hashMapOf(
@@ -30,10 +33,12 @@ class EmailSignInSignUpClient {
                 "email" to email,
                 "profileImageUrl" to ""
             )
-        )
+        ).await()
         true
     } catch (e: Exception) {
+        println("ERROR")
         e.printStackTrace()
+        println("ERROR")
         false
     }
 
@@ -63,9 +68,8 @@ class EmailSignInSignUpClient {
 
     suspend fun signInWithEmailAndPassword(email: String, password: String): Pair<Boolean, Int> =
         try {
-            auth.signInWithEmailAndPassword(email, password)
-                .await().user!!.isEmailVerified to 1 //?: false
-
+            val user = auth.signInWithEmailAndPassword(email, password).await().user!!
+            user.isEmailVerified to 1
 
         } catch (e: Exception) {
             false to 0

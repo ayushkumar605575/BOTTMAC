@@ -51,6 +51,14 @@ fun TextInput(
         keyboardActions = keyboardActions,
         supportingText = {
             Column {
+                if (inputType.label == "Name" && hasError) {
+                    Text(text = "• Cannot be empty.")
+                }
+
+                if(inputType.label == "Phone Number"  && hasError) {
+                    Text(text = "• Cannot be empty.")
+                }
+
                 if (inputType.label == "Password" && pass != "L") {
                     if (value.length < 8) {
                         Text(text = "• Password length must be at least 8")

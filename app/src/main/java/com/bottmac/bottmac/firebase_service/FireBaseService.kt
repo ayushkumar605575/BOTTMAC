@@ -8,7 +8,7 @@ import kotlinx.coroutines.tasks.await
 
 class FireBaseService {
     private val auth = FirebaseAuth.getInstance()
-    private val storageRef = FirebaseStorage.getInstance()// .getReference("${auth}.jpg")
+    private val storageRef = FirebaseStorage.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
     //    fun get st
@@ -29,7 +29,6 @@ class FireBaseService {
                         }
                     }
                 }
-//            auth.currentUser!!.uid
         } else {
             isUploading()
         }
@@ -48,16 +47,21 @@ class FireBaseService {
         auth.sendPasswordResetEmail(email)
     }
 
-    fun updateProfileDetails(userName: String, userPhoneNumber: String, isUpdating: (Boolean) -> Unit) {
-        if (auth.currentUser != null) {
-            val uid = auth.currentUser!!.uid
-            db.document("users/${uid}").get().addOnSuccessListener { snapshot ->
-//            profileUploadTask.storage.downloadUrl.addOnSuccessListener { downloadLink ->
+    fun updateProfileDetails(
+        userName: String,
+        userPhoneNumber: String,
+        isUpdating: (Boolean) -> Unit
+    ) {
+        val user = auth.currentUser
+        if (user != null) {
+            db.document("users/${user.uid}").get().addOnSuccessListener { snapshot ->
                 snapshot.reference.update(
                     mapOf<String, String>("name" to userName, "phoneNumber" to userPhoneNumber)
                 )
                 isUpdating(false)
             }
+        } else {
+            println("EEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRRRRRREEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRR")
         }
     }
 }

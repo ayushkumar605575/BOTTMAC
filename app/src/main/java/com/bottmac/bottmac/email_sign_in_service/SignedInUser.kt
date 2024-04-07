@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
-import com.bottmac.bottmac.presentation.main_screen.displayToast
 import com.bottmac.bottmac.userdata.UserData
 import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,11 +37,16 @@ class SignedInUser @Inject constructor(application: Application) : AndroidViewMo
         getUserUpdatedData()
     }
 
+    fun resetUserData() {
+        viewModelScope.launch {
+            _signedInUserData.emit(UserData(null, null, null, null, null))
+        }
+    }
+
     fun signOutCurrentUser() {
         viewModelScope.launch {
             googleAuthUiClient.signOut()
-            _signedInUserData.emit(UserData(null, null, null, null, null))
-            displayToast(context, "User Signed Out")
+            resetUserData()
         }
     }
 

@@ -90,7 +90,8 @@ fun SignUpScreen(
                     }),
                     focusRequester = passwordFocusRequester,
                     value = userName,
-                    onValueChange = { userName = it }
+                    onValueChange = { userName = it },
+                    hasError = userName.isEmpty()
                 )
             }
             item {
@@ -104,8 +105,10 @@ fun SignUpScreen(
                     focusRequester = passwordFocusRequester,
                     value = phoneNumberWithCountryCode,
                     onValueChange = {
-                        phoneNumberWithCountryCode = it
-                    }
+                        phoneNumberWithCountryCode =
+                            if (it.length >= 13) it.substring(0, 13) else it
+                    },
+                    hasError = userName.isEmpty()
                 )
             }
             item {
@@ -155,7 +158,7 @@ fun SignUpScreen(
             item { Spacer(modifier = Modifier.height(20.dp)) }
             item {
                 val isValidCredential =
-                    (isValidEmail(email) && isValidPassword(password) && isChecked)
+                    (isValidEmail(email) && isValidPassword(password))
                 SignInSignUpButton(
                     btnText = "SIGN UP",
                     name = userName,
@@ -163,8 +166,10 @@ fun SignUpScreen(
                     email = email,
                     password = password,
                     isValidCredential = isValidCredential,
+                    hasConsent = isChecked,
                     navController = navController,
                     onSignInClick = onSignInClick,
+                    onInvalidSignIn = onSignInClick
                 )
             }
             item {
@@ -183,7 +188,7 @@ fun SignUpScreen(
                 BrowseAsGuest(
                     state = state,
                     onSignInClick = onGoogleSignInClick,
-                    navController = navController
+                    onGuest = onSignInClick,
                 )
             }
             item {
