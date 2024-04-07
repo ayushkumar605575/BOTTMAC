@@ -48,6 +48,7 @@ import com.bottmac.bottmac.presentation.main_screen.profile.ProfileOptions
 import com.bottmac.bottmac.presentation.main_screen.profile.ShippingAddressScreen
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.LoginScreen
 import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.SignUpScreen
+import com.bottmac.bottmac.product_view_model.ProductsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -56,16 +57,10 @@ fun NavGraph(
     googleAuthUiClient: GoogleAuthUiClient
 ) {
     val cSignedInUser = hiltViewModel<SignedInUser>()
+    val productsViewModel = hiltViewModel<ProductsViewModel>()
 
     NavHost(navController = navController, startDestination = "startUp") {
         navigation(startDestination = NavigationRoutes.SignIn.route, route = "startUp") {
-//            composable(route = "loadingScreen") {
-//                Column(
-//                    modifier = Modifier.fillMaxSize(),
-//                    verticalArrangement = Arrangement.Center,
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) { CircularProgressIndicator() }
-//            }
             composable(
                 route = NavigationRoutes.SignIn.route,
                 enterTransition = {
@@ -111,22 +106,20 @@ fun NavGraph(
                 }
                 LoginScreen(
                     state = state,
-                    onSignInClick = {
+                    onGoogleSignInClick = {
                         scope.launch {
                             // TODO: Fix the user sign In error with different account
-                            cSignedInUser.getUserUpdatedData()
                             val signInIntentSender = googleAuthUiClient.signIn()
-//                            if (signInIntentSender == null) {
-//                                cSignedInUser.getUserUpdatedData()
-//                            } else {
                             launcher.launch(
                                 IntentSenderRequest.Builder(
                                     signInIntentSender ?: return@launch
                                 ).build()
                             )
-//                                cSignedInUser.getUserUpdatedData()
-//                            }
+                            cSignedInUser.getUserUpdatedData()
                         }
+                    },
+                    onSignInClick = {
+                        cSignedInUser.getUserUpdatedData()
                     },
                     navController = navController
                 )
@@ -163,7 +156,7 @@ fun NavGraph(
                 }
                 SignUpScreen(
                     state = state,
-                    onSignInClick = {
+                    onGoogleSignInClick = {
                         scope.launch {
                             val signInIntentSender = googleAuthUiClient.signIn()
                             launcher.launch(
@@ -173,6 +166,7 @@ fun NavGraph(
                             )
                         }
                     },
+                    onSignInClick = {},
                     navController = navController
                 )
             }
@@ -200,7 +194,8 @@ fun NavGraph(
             ) {
                 MainScreenStructure(
                     navController = navController,
-                    cSignedInUser = cSignedInUser
+                    cSignedInUser = cSignedInUser,
+                    productsViewModel = productsViewModel
                 )
             }
         }
@@ -288,8 +283,6 @@ fun NavGraph(
                     )
                 }
             ) { //backStackEntry ->
-//                val cSignedInUser =
-//                    backStackEntry.sharedViewModel<SignedInUser>(navController = navController)
                 val userData by cSignedInUser.signedInUserData.collectAsStateWithLifecycle()
 
                 profileOptionScreen = { paddingValue ->

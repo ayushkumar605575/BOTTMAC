@@ -98,7 +98,7 @@ class GoogleAuthUiClient(
 
     suspend fun getSignedInUser(): UserData {
         val user = auth.currentUser
-        println("User $user")
+//        println("User $user")
         if (user != null) {
             val userData = try {
                 db.document("users/${user.uid}").get().await().data

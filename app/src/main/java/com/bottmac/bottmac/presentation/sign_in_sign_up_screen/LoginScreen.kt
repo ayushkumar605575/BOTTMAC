@@ -40,6 +40,7 @@ import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.TextIn
 @Composable
 fun LoginScreen(
     state: SignedInState,
+    onGoogleSignInClick: () -> Unit,
     onSignInClick: () -> Unit,
     navController: NavController,
 ) {
@@ -136,7 +137,7 @@ fun LoginScreen(
                 )
                 BrowseAsGuest(
                     state = state,
-                    onSignInClick = onSignInClick,
+                    onSignInClick = onGoogleSignInClick,
                     navController = navController
                 )
                 Row(

@@ -9,6 +9,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -16,9 +18,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.bottmac.bottmac.google_sign_in_service.GoogleAuthUiClient
 import com.bottmac.bottmac.navigation.NavGraph
+import com.bottmac.bottmac.navigation.NavigationRoutes
 import com.bottmac.bottmac.ui.theme.BOTTMACTheme
 import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 
@@ -32,18 +36,18 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    private var _isLoading = MutableStateFlow(true)
+    private var _isUser = MutableStateFlow(false)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
+
             setKeepOnScreenCondition { // Splash Screen Shows Up until the condition is true
-                var isLoading = true
                 lifecycleScope.launch {
-                    googleAuthUiClient.getSignedInUser()
-//                    googleAuthUiClient.getSignedInUser().userId != null) {
-                    isLoading = false
-//                }
+                    _isUser.emit(googleAuthUiClient.getSignedInUser().userId != null)
+                    _isLoading.emit(false)
                 }
-                isLoading
+                _isLoading.value
             }
             setOnExitAnimationListener { splashScreens ->
                 val zoomX = ObjectAnimator.ofFloat(
@@ -76,23 +80,21 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val isUser by _isUser.collectAsState()
+                    val isLoading by _isLoading.collectAsState()
                     val navController = rememberNavController()
-//                    LaunchedEffect(key1 = Unit) {
-//                        if (googleAuthUiClient.getSignedInUser().userId != null) {
-//                            navController.navigate("mainScreen") {
-//                                popUpTo("startUp") {
-//                                    inclusive = true
-//                                }
-//                            }
-//                        } else {
-//                            navController.navigate(NavigationRoutes.SignIn.route) {
-//                                popUpTo("startUp") {
-//                                    inclusive = false
-//                                }
-//                            }
-//                        }
-//                    }
-                    NavGraph(navController = navController, googleAuthUiClient)
+                    if (isUser && !isLoading) {
+                        println("User Loaded")
+                        navController.navigate("mainScreen") {
+                            popUpTo(NavigationRoutes.SignIn.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                    NavGraph(
+                        navController = navController,
+                        googleAuthUiClient = googleAuthUiClient
+                    )
                 }
             }
         }

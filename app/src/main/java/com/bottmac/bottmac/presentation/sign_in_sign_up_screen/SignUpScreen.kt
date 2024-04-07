@@ -41,6 +41,7 @@ import com.bottmac.bottmac.presentation.sign_in_sign_up_screen.components.TextIn
 fun SignUpScreen(
     state: SignedInState,
     onSignInClick: () -> Unit,
+    onGoogleSignInClick: () -> Unit,
     navController: NavController,
 ) {
     val passwordFocusRequester = FocusRequester()
@@ -181,7 +182,7 @@ fun SignUpScreen(
             item {
                 BrowseAsGuest(
                     state = state,
-                    onSignInClick = onSignInClick,
+                    onSignInClick = onGoogleSignInClick,
                     navController = navController
                 )
             }
