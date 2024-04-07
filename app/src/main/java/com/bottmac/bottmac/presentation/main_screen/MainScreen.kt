@@ -60,7 +60,6 @@ fun MainScreenStructure(
     cSignedInUser: SignedInUser,
     productsViewModel: ProductsViewModel,
 ) {
-//    cSignedInUser.getUserUpdatedData()
     val userData by cSignedInUser.signedInUserData.collectAsStateWithLifecycle()
     val products by productsViewModel.productItems.collectAsStateWithLifecycle()
 
